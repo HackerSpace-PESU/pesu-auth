@@ -25,13 +25,14 @@ On authentication, it returns the following parameters in a JSON object. If the 
     "authentication-status": , 
     "timestamp": , 
     "profile-data": 
-        {"name": , 
-        "prn": , 
-        "srn": , 
-        "degree": , 
-        "branch": , 
-        "semester": ,
-        "section": 
+        {
+            "name": , 
+            "prn": , 
+            "srn": , 
+            "degree": , 
+            "branch": , 
+            "semester": ,
+            "section": 
         }
 }
 ```
