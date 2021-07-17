@@ -13,10 +13,12 @@ IST = pytz.timezone('Asia/Kolkata')
 def home():
     username = request.form.get("username")
     password = request.form.get("password")
+    print(username, password)
 
     login_status = False
     profile_data = dict()
     if username != None and password != None:
+        print("Trying to log in...")
         login_status, profile_data = authenticatePESU(username, password)
 
     result = {
