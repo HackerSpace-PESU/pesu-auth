@@ -1,6 +1,8 @@
 # pesu-auth
 A simple API to authenticate PESU credentials using PESU Academy
 
+The API is secure and protects user privacy by not storing any user credentials. It only validates credentials and returns the user's profile information.
+
 # How to use pesu-auth
 
 You can use the API to authenticate your PESU credentials using a simple ```POST``` request. Here is an example using Python:
@@ -14,7 +16,6 @@ data = {
 }
 
 response = requests.post('https://pesu-auth.herokuapp.com/', data=data)
-
 ```
 
 On authentication, it returns the following parameters in a JSON object. If the sign-in was successful, the response's 
