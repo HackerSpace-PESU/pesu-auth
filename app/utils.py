@@ -4,9 +4,9 @@ from dotenv import load_dotenv
 from selenium import webdriver
 
 chrome_options = webdriver.ChromeOptions()
-# chrome_options.add_argument("--headless")
-# chrome_options.add_argument("--no-sandbox")
-# chrome_options.add_argument("--disable-dev-shm-usage")
+chrome_options.add_argument("--headless")
+chrome_options.add_argument("--no-sandbox")
+chrome_options.add_argument("--disable-dev-shm-usage")
 chrome_options.add_argument("--window-size=1920,1080")
 chrome_options.add_argument('--ignore-ssl-errors=yes')
 chrome_options.add_argument('--ignore-certificate-errors')
@@ -18,10 +18,9 @@ CHROMEDRIVER_PATH = os.environ["CHROMEDRIVER_PATH"]
 
 
 def authenticatePESU(username, password):
-    #chrome = webdriver.Chrome(
-    #    executable_path=CHROMEDRIVER_PATH, options=chrome_options)
-    chrome = webdriver.Chrome(
-       executable_path="chromedriver.exe", options=chrome_options)
+    chrome = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, options=chrome_options)
+    # chrome = webdriver.Chrome(
+    #    executable_path="chromedriver.exe", options=chrome_options)
     chrome.get("https://pesuacademy.com/Academy")
     time.sleep(2)
 
