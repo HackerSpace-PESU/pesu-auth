@@ -18,7 +18,8 @@ CHROMEDRIVER_PATH = os.environ["CHROMEDRIVER_PATH"]
 
 
 def authenticatePESU(username, password):
-    chrome = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, options=chrome_options)
+    chrome = webdriver.Chrome(
+        executable_path=CHROMEDRIVER_PATH, options=chrome_options)
     chrome.get("https://pesuacademy.com/Academy")
     time.sleep(2)
 
