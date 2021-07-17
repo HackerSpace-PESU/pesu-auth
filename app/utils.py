@@ -19,8 +19,6 @@ CHROMEDRIVER_PATH = os.environ["CHROMEDRIVER_PATH"]
 
 def authenticatePESU(username, password):
     chrome = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, options=chrome_options)
-    # chrome = webdriver.Chrome(
-    #    executable_path="chromedriver.exe", options=chrome_options)
     chrome.get("https://pesuacademy.com/Academy")
     time.sleep(2)
 
@@ -43,17 +41,14 @@ def authenticatePESU(username, password):
         menu_options = chrome.find_elements_by_xpath(
             r'//*[@class="menu-name"]')
         menu_options[9].click()
-        time.sleep(1)
         login_status = True
     except:
-        print("Log in failed...")
         login_status = False
 
     if login_status:
-        print("Logged in successfully...")
+        time.sleep(1)
         text_boxes = chrome.find_elements_by_xpath(
             r'//*[@class="col-md-12 col-xs-12 control-label text-left"]')
-        print(text_boxes)
 
         text_content = [text_box.text.strip() for text_box in text_boxes[:7]]
         name, prn, srn, degree, branch, semester, section = text_content
