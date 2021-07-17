@@ -4,9 +4,9 @@ from dotenv import load_dotenv
 from selenium import webdriver
 
 chrome_options = webdriver.ChromeOptions()
-chrome_options.add_argument("--headless")
-chrome_options.add_argument("--no-sandbox")
-chrome_options.add_argument("--disable-dev-shm-usage")
+# chrome_options.add_argument("--headless")
+# chrome_options.add_argument("--no-sandbox")
+# chrome_options.add_argument("--disable-dev-shm-usage")
 chrome_options.add_argument("--window-size=1920,1080")
 chrome_options.add_argument('--ignore-ssl-errors=yes')
 chrome_options.add_argument('--ignore-certificate-errors')
@@ -18,10 +18,10 @@ CHROMEDRIVER_PATH = os.environ["CHROMEDRIVER_PATH"]
 
 
 def authenticatePESU(username, password):
+    #chrome = webdriver.Chrome(
+    #    executable_path=CHROMEDRIVER_PATH, options=chrome_options)
     chrome = webdriver.Chrome(
-        executable_path=CHROMEDRIVER_PATH, options=chrome_options)
-    # chrome = webdriver.Chrome(
-    #    executable_path="chromedriver.exe", options=chrome_options)
+       executable_path="chromedriver.exe", options=chrome_options)
     chrome.get("https://pesuacademy.com/Academy")
     time.sleep(2)
 
@@ -44,7 +44,7 @@ def authenticatePESU(username, password):
         menu_options = chrome.find_elements_by_xpath(
             r'//*[@class="menu-name"]')
         menu_options[9].click()
-        time.sleep(0.3)
+        time.sleep(1)
         login_status = True
     except:
         print("Log in failed...")
@@ -53,8 +53,10 @@ def authenticatePESU(username, password):
     if login_status:
         print("Logged in successfully...")
         text_boxes = chrome.find_elements_by_xpath(
-            r'//*[@class="col-md-12 col-xs-12 control-label text-left"]')[:7]
-        text_content = [text_box.text.strip() for text_box in text_boxes]
+            r'//*[@class="col-md-12 col-xs-12 control-label text-left"]')
+        print(text_boxes)
+
+        text_content = [text_box.text.strip() for text_box in text_boxes[:7]]
         name, prn, srn, degree, branch, semester, section = text_content
         profile_data["name"] = name
         profile_data["prn"] = prn

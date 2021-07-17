@@ -9,7 +9,7 @@ You can use the API to authenticate your PESU credentials using a simple POST re
 import requests
 
 data = {
-    'username': 'your_username',
+    'username': 'your_SRN_or_PRN',
     'password': 'your_password'
 }
 
