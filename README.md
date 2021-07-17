@@ -16,6 +16,7 @@ data = {
 }
 
 response = requests.post('https://pesu-auth.herokuapp.com/', data=data)
+print(response.json())
 ```
 
 On authentication, it returns the following parameters in a JSON object. If the sign-in was successful, the response's 
