@@ -17,11 +17,11 @@ GOOGLE_CHROME_BIN = os.environ["GOOGLE_CHROME_BIN"]
 CHROMEDRIVER_PATH = os.environ["CHROMEDRIVER_PATH"]
 
 
-def authenticatePESU(username, password):
+def authenticatePESU(username, password, get_profile_data):
     chrome = webdriver.Chrome(
         executable_path=CHROMEDRIVER_PATH, options=chrome_options)
     chrome.get("https://pesuacademy.com/Academy")
-    time.sleep(2)
+    time.sleep(1)
 
     username_box = chrome.find_element_by_xpath(r'//*[@id="j_scriptusername"]')
     password_box = chrome.find_element_by_xpath(r'//*[@name="j_password"]')
@@ -41,12 +41,16 @@ def authenticatePESU(username, password):
     try:
         menu_options = chrome.find_elements_by_xpath(
             r'//*[@class="menu-name"]')
-        menu_options[9].click()
+        
+        for menu_option in menu_options:
+            if menu_option.text == "My Profile":
+                break
+        menu_option.click()
         login_status = True
     except:
         login_status = False
 
-    if login_status:
+    if login_status and get_profile_data:
         time.sleep(1)
         text_boxes = chrome.find_elements_by_xpath(
             r'//*[@class="col-md-12 col-xs-12 control-label text-left"]')
