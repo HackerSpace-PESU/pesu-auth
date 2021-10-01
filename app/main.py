@@ -13,17 +13,21 @@ IST = pytz.timezone("Asia/Kolkata")
 def home():
     username = request.form.get("username")
     password = request.form.get("password")
+    get_profile_data = str(request.form.get("get_profile_data")).lower() == "true"
 
     login_status = False
     profile_data = dict()
     if username != None and password != None:
-        login_status, profile_data = authenticatePESU(username, password)
+        login_status, profile_data = authenticatePESU(username, password, get_profile_data)
 
     result = {
         "authentication-status": login_status,
         "timestamp": str(datetime.datetime.now(IST)),
-        "profile-data": profile_data
     }
+
+    if get_profile_data:
+        result["profile-data"] = profile_data
+
     result = json.dumps(result)
     return result, 200
 

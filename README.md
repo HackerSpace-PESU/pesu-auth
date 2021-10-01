@@ -19,7 +19,7 @@ response = requests.post('https://pesu-auth.herokuapp.com/', data=data)
 print(response.json())
 ```
 
-On authentication, it returns the following parameters in a JSON object. If the sign-in was successful, the response's 
+On authentication, it returns the following parameters in a JSON object. If the sign-in was successful and profile data was requested, the response's 
 `profile-data` key will store a dictionary with a user's profile information. On an unsuccessful sign-in, this field will hold an empty dictionary.
 
 ```json
