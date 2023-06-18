@@ -11,30 +11,32 @@ You can use the API to authenticate your PESU credentials using a simple ```POST
 import requests
 
 data = {
-    'username': 'your_SRN_or_PRN',
-    'password': 'your_password'
+    'username': 'your SRN or PRN here',
+    'password': 'your password here',
+    'profile': False # Optional, defaults to False
+    # Set to True if you want to retrieve the user's profile information
 }
 
-response = requests.post('https://pesu-auth.herokuapp.com/', data=data)
+response = requests.post("http://localhost:5000/authenticate", json=data)
 print(response.json())
 ```
 
-On authentication, it returns the following parameters in a JSON object. If the sign-in was successful and profile data was requested, the response's 
-`profile-data` key will store a dictionary with a user's profile information. On an unsuccessful sign-in, this field will hold an empty dictionary.
+On authentication, it returns the following parameters in a JSON object. If the authentication was successful and profile data was requested, the response's 
+`profile` key will store a dictionary with a user's profile information. **On an unsuccessful sign-in, this field will not exist**.
 
 ```json
 {
-    "authentication-status": , 
-    "timestamp": , 
-    "profile-data": 
-        {
-            "name": , 
-            "prn": , 
-            "srn": , 
-            "degree": , 
-            "branch": , 
-            "semester": ,
-            "section": 
-        }
+    "status": true,
+    "profile": {
+        "name": "Johnny Blaze",
+        "pesu_id": "PES1201800001",
+        "srn": "PES1201800001",
+        "program": "Bachelor of Technology",
+        "branch": "Computer Science and Engineering",
+        "semester": "Sem-8",
+        "section": "Section A"
+    },
+    "message": "Login successful.",
+    "timestamp": "2023-06-18 20:57:59.979374+05:30"
 }
 ```

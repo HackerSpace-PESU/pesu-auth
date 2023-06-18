@@ -1,5 +1,4 @@
-.vscode
-__pycache__
-pesu-auth/
-*.env
-chromedriver*
+.idea/
+.vscode/
+__pycache__/
+*.log
