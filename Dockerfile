@@ -15,6 +15,7 @@ RUN chmod +x /usr/bin/chromedriver
 RUN rm -rf chromedriver/
 
 COPY app /app
+COPY README.md /README.md
 COPY requirements.txt /requirements.txt
 
 RUN pip install -r requirements.txt

@@ -13,4 +13,6 @@ jobs:
     - name: Build the Docker image
       run: docker build . --tag pesu-auth
     - name: Spawn a container
-      run: docker run --name pesu-auth -d -p 5000:5000 pesu-auth --retry-connrefused --retries=10 --timeout=5s http://localhost:5000/
+      run: docker run --name pesu-auth -d -p 5000:5000 pesu-auth
+    - name: Run a ping test
+      run: curl -s http://localhost:5000/
