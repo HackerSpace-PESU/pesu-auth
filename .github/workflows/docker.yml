@@ -15,4 +15,4 @@ jobs:
     - name: Spawn a container
       run: docker run --name pesu-auth -d -p 5000:5000 pesu-auth
     - name: Run a ping test
-      run: curl -s http://localhost:5000/
+      run: docker exec pesu-auth curl -s http://localhost:5000/
