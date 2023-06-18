@@ -1,7 +1,10 @@
 import datetime
 import json
 import logging
+import os
+import traceback
 
+import gh_md_to_html
 import pytz
 from flask import Flask, request
 
@@ -18,8 +21,28 @@ logging.basicConfig(
 )
 
 
+def convert_readme_to_html():
+    html = gh_md_to_html.main("README.md").strip()
+    with open("README.html", "w") as f:
+        f.write(html)
+
+
+@app.route("/")
+def index():
+    try:
+        if "README.html" not in os.listdir():
+            convert_readme_to_html()
+        with open("README.html") as f:
+            output = f.read()
+            return output, 200
+    except Exception as e:
+        stacktrace = traceback.format_exc()
+        logging.error(f"Error rendering home page: {e}: {stacktrace}")
+        return "Error occurred while retrieving home page", 500
+
+
 @app.route("/authenticate", methods=["POST"])
-def home():
+def authenticate():
     username = request.json.get("username")
     password = request.json.get("password")
     profile = request.json.get("profile", False)
