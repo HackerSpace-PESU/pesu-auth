@@ -69,7 +69,7 @@ def authenticate_interactive():
     if isinstance(profile, str):
         profile = profile.lower() == "true"
     current_time = datetime.datetime.now(IST)
-    authentication_result = pesu_academy.authenticate_manual(profile)
+    authentication_result = pesu_academy.authenticate_interactive(profile)
     authentication_result["timestamp"] = str(current_time)
     return json.dumps(authentication_result), 200
 

@@ -149,7 +149,7 @@ class PESUAcademy:
             self.chrome.quit()
             return {"status": status, "message": "Login successful."}
 
-    def authenticate_manual(self, profile: bool = False) -> dict[str, Any]:
+    def authenticate_interactive(self, profile: bool = False) -> dict[str, Any]:
         self.init_chrome(headless=False)
 
         try:
