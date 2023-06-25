@@ -63,9 +63,11 @@ def authenticate():
     }), 400
 
 
-@app.route("/authenticateManual", methods=["GET", "POST"])
-def authenticate_manual():
-    profile = request.json.get("profile", False)
+@app.route("/authenticateInteractive", methods=["GET", "POST"])
+def authenticate_interactive():
+    profile = request.args.get("profile", False)
+    if isinstance(profile, str):
+        profile = profile.lower() == "true"
     current_time = datetime.datetime.now(IST)
     authentication_result = pesu_academy.authenticate_manual(profile)
     authentication_result["timestamp"] = str(current_time)

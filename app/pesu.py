@@ -84,13 +84,14 @@ class PESUAcademy:
                     if key in ["name", "srn", "pesu_id", "srn", "program", "branch", "semester", "section"]:
                         if key == "branch" and (branch_short_code := self.map_branch_to_short_code(value)):
                             profile["branch_short_code"] = branch_short_code
+                        key = "prn" if key == "pesu_id" else key
                         profile[key] = value
 
             # if username starts with PES1, then he is from RR campus, else if it is PES2, then EC campus
             key = username if username else profile["pesu_id"]
             if campus_code_match := re.match(r"PES(\d)", key):
                 campus_code = campus_code_match.group(1)
-                profile["campus_code"] = campus_code
+                profile["campus_code"] = int(campus_code)
                 profile["campus"] = "RR" if campus_code == "1" else "EC"
 
             logging.info("Profile data fetched successfully")
