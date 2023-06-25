@@ -59,6 +59,48 @@ class PESUAcademy:
     def map_branch_to_short_code(self, branch: str) -> Optional[str]:
         return self.branch_short_code_map.get(branch)
 
+    def get_profile_details(self, username: Optional[str] = None) -> dict[str, Any]:
+        try:
+            logging.info("Navigating to profile data")
+            menu_options = self.chrome.find_elements(By.CLASS_NAME, "menu-name")
+            for option in menu_options:
+                if option.text == "My Profile":
+                    option.click()
+                    break
+            time.sleep(3)
+            self.chrome.implicitly_wait(3)
+        except Exception as e:
+            logging.error(f"Unable to find the profile button: {traceback.format_exc()}")
+            self.chrome.quit()
+            return {"status": False, "message": "Unable to find the profile button after login.", "error": str(e)}
+
+        try:
+            logging.info("Fetching profile data from page")
+            profile = dict()
+            for field in self.chrome.find_elements(By.CLASS_NAME, "form-group")[6:13]:
+                if (text := field.text) and "\n" in text:
+                    key, value = list(map(str.strip, text.split("\n")))
+                    key = "_".join(key.split()).lower()
+                    if key in ["name", "srn", "pesu_id", "srn", "program", "branch", "semester", "section"]:
+                        if key == "branch" and (branch_short_code := self.map_branch_to_short_code(value)):
+                            profile["branch_short_code"] = branch_short_code
+                        profile[key] = value
+
+            # if username starts with PES1, then he is from RR campus, else if it is PES2, then EC campus
+            key = username if username else profile["pesu_id"]
+            if campus_code_match := re.match(r"PES(\d)", key):
+                campus_code = campus_code_match.group(1)
+                profile["campus_code"] = campus_code
+                profile["campus"] = "RR" if campus_code == "1" else "EC"
+
+            logging.info("Profile data fetched successfully")
+            self.chrome.quit()
+            return {"status": True, "profile": profile, "message": "Login successful."}
+        except Exception as e:
+            logging.error(f"Unable to fetch profile data: {traceback.format_exc()}")
+            self.chrome.quit()
+            return {"status": False, "message": "Unable to fetch profile data.", "error": str(e)}
+
     def authenticate_credentials(self, username: str, password: str, profile: bool = False) -> dict[str, Any]:
         self.init_chrome()
 
@@ -101,45 +143,7 @@ class PESUAcademy:
             logging.info("Login successful")
 
         if profile:
-            try:
-                logging.info("Navigating to profile data")
-                menu_options = self.chrome.find_elements(By.CLASS_NAME, "menu-name")
-                for option in menu_options:
-                    if option.text == "My Profile":
-                        option.click()
-                        break
-                time.sleep(3)
-                self.chrome.implicitly_wait(3)
-            except Exception as e:
-                logging.error(f"Unable to find the profile button: {traceback.format_exc()}")
-                self.chrome.quit()
-                return {"status": False, "message": "Unable to find the profile button after login.", "error": str(e)}
-
-            try:
-                logging.info("Fetching profile data from page")
-                profile = dict()
-                for field in self.chrome.find_elements(By.CLASS_NAME, "form-group")[6:13]:
-                    if (text := field.text) and "\n" in text:
-                        key, value = list(map(str.strip, text.split("\n")))
-                        key = "_".join(key.split()).lower()
-                        if key in ["name", "srn", "pesu_id", "srn", "program", "branch", "semester", "section"]:
-                            if key == "branch" and (branch_short_code := self.map_branch_to_short_code(value)):
-                                profile["branch_short_code"] = branch_short_code
-                            profile[key] = value
-
-                # if username starts with PES1, then he is from RR campus, else if it is PES2, then EC campus
-                if campus_code_match := re.match(r"PES(\d)", username):
-                    campus_code = campus_code_match.group(1)
-                    profile["campus_code"] = campus_code
-                    profile["campus"] = "RR" if campus_code == "1" else "EC"
-
-                logging.info("Profile data fetched successfully")
-                self.chrome.quit()
-                return {"status": status, "profile": profile, "message": "Login successful."}
-            except Exception as e:
-                logging.error(f"Unable to fetch profile data: {traceback.format_exc()}")
-                self.chrome.quit()
-                return {"status": False, "message": "Unable to fetch profile data.", "error": str(e)}
+            return self.get_profile_details(username)
         else:
             self.chrome.quit()
             return {"status": status, "message": "Login successful."}
@@ -172,46 +176,7 @@ class PESUAcademy:
             return {"status": False, "message": "Unable to find the login form.", "error": str(e)}
 
         if profile:
-            try:
-                logging.info("Navigating to profile data")
-                menu_options = self.chrome.find_elements(By.CLASS_NAME, "menu-name")
-                for option in menu_options:
-                    if option.text == "My Profile":
-                        option.click()
-                        break
-                time.sleep(3)
-                self.chrome.implicitly_wait(3)
-            except Exception as e:
-                logging.error(f"Unable to find the profile button: {traceback.format_exc()}")
-                self.chrome.quit()
-                return {"status": False, "message": "Unable to find the profile button after login.", "error": str(e)}
-
-            try:
-                logging.info("Fetching profile data from page")
-                profile = dict()
-                for field in self.chrome.find_elements(By.CLASS_NAME, "form-group")[6:13]:
-                    if (text := field.text) and "\n" in text:
-                        key, value = list(map(str.strip, text.split("\n")))
-                        key = "_".join(key.split()).lower()
-                        if key in ["name", "srn", "pesu_id", "srn", "program", "branch", "semester", "section"]:
-                            if key == "branch" and (branch_short_code := self.map_branch_to_short_code(value)):
-                                profile["branch_short_code"] = branch_short_code
-                            profile[key] = value
-
-                # if username starts with PES1, then he is from RR campus, else if it is PES2, then EC campus
-                if campus_code_match := re.match(r"PES(\d)", profile["pesu_id"]):
-                    campus_code = campus_code_match.group(1)
-                    profile["campus_code"] = campus_code
-                    profile["campus"] = "RR" if campus_code == "1" else "EC"
-
-                logging.info("Profile data fetched successfully")
-                self.chrome.quit()
-                return {"status": status, "profile": profile, "message": "Login successful."}
-            except Exception as e:
-                logging.error(f"Unable to fetch profile data: {traceback.format_exc()}")
-                self.chrome.quit()
-                return {"status": False, "message": "Unable to fetch profile data.", "error": str(e)}
-
+            return self.get_profile_details()
         else:
             self.chrome.quit()
             return {"status": status, "message": "Login successful."}
