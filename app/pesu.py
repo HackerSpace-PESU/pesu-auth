@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 import time
 import traceback
 from typing import Any, Optional
@@ -12,6 +13,15 @@ class PESUAcademy:
     def __init__(self):
         self.chrome: Optional[webdriver.Chrome] = None
         self.chrome_options: Optional[webdriver.ChromeOptions] = None
+
+        self.branch_short_code_map = {
+            "Computer Science and Engineering": "CSE",
+            "Electronics and Communication Engineering": "ECE",
+            "Mechanical Engineering": "ME",
+            "Electrical and Electronics Engineering": "EEE",
+            "Civil Engineering": "CE",
+            "Biotechnology": "BT",
+        }
 
     def init_chrome(self):
         logging.info("Initializing Chrome")
@@ -41,6 +51,9 @@ class PESUAcademy:
                 )
         self.chrome.execute_cdp_cmd("Emulation.setTimezoneOverride", {"timezoneId": "Asia/Kolkata"})
 
+    def map_branch_to_short_code(self, branch: str) -> Optional[str]:
+        return self.branch_short_code_map.get(branch)
+
     def authenticate(self, username: str, password: str, profile: bool = False) -> dict[str, Any]:
         self.init_chrome()
 
@@ -68,14 +81,14 @@ class PESUAcademy:
         try:
             logging.info(f"Checking if the login was successful")
             if (element := self.chrome.find_element(By.CLASS_NAME, "login-msg")) \
-                    and element.text == "Your Username and Password do not match":
+                    and element.text in ("Your Username and Password do not match", "User doesn't exist"):
                 # this element is shown only when the login is unsuccessful
                 logging.error("Login unsuccessful")
                 self.chrome.quit()
                 status = False
                 return {
                     "status": status,
-                    "message": "Invalid username or password."
+                    "message": "Invalid username or password, or the user does not exist.",
                 }
         except Exception:
             # this element is not shown when the login is successful
@@ -105,7 +118,15 @@ class PESUAcademy:
                         key, value = list(map(str.strip, text.split("\n")))
                         key = "_".join(key.split()).lower()
                         if key in ["name", "srn", "pesu_id", "srn", "program", "branch", "semester", "section"]:
+                            if key == "branch" and (branch_short_code := self.map_branch_to_short_code(value)):
+                                profile["branch_short_code"] = branch_short_code
                             profile[key] = value
+
+                # if username starts with PES1, then he is from RR campus, else if it is PES2, then EC campus
+                if campus_code_match := re.match(r"PES(\d)", username):
+                    campus_code = campus_code_match.group(1)
+                    profile["campus_code"] = campus_code
+                    profile["campus"] = "RR" if campus_code == "1" else "EC"
 
                 logging.info("Profile data fetched successfully")
                 return {"status": status, "profile": profile, "message": "Login successful."}
