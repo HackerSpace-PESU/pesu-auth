@@ -123,9 +123,10 @@ class PESUAcademy:
                             profile[key] = value
 
                 # if username starts with PES1, then he is from RR campus, else if it is PES2, then EC campus
-                campus_code = re.match(r"PES(\d)", username).group(1)
-                profile["campus_code"] = campus_code
-                profile["campus"] = "RR" if campus_code == "1" else "EC"
+                if campus_code_match := re.match(r"PES(\d)", username):
+                    campus_code = campus_code_match.group(1)
+                    profile["campus_code"] = campus_code
+                    profile["campus"] = "RR" if campus_code == "1" else "EC"
 
                 logging.info("Profile data fetched successfully")
                 return {"status": status, "profile": profile, "message": "Login successful."}
