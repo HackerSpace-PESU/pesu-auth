@@ -29,6 +29,7 @@ def convert_readme_to_html():
 
 @app.route("/")
 def index():
+    # TODO: Fix this - replace with SwaggerUI
     try:
         if "README.html" not in os.listdir():
             convert_readme_to_html()
@@ -52,7 +53,7 @@ def authenticate():
     if username and password:
         username = username.strip()
         password = password.strip()
-        authentication_result = pesu_academy.authenticate_credentials(username, password, profile)
+        authentication_result = pesu_academy.authenticate(username, password, profile)
         authentication_result["timestamp"] = str(current_time)
         return json.dumps(authentication_result), 200
 
@@ -69,10 +70,12 @@ def authenticate_interactive():
     if isinstance(profile, str):
         profile = profile.lower() == "true"
     current_time = datetime.datetime.now(IST)
-    authentication_result = pesu_academy.authenticate_interactive(profile)
+    authentication_result = pesu_academy.authenticate_selenium_interactive(profile)
     authentication_result["timestamp"] = str(current_time)
     return json.dumps(authentication_result), 200
 
+
+# TODO: Add routes for all possible auth methods
 
 if __name__ == "__main__":
     pesu_academy = PESUAcademy()
