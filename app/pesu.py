@@ -7,6 +7,8 @@ from typing import Any, Optional
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as ec
+from selenium.webdriver.support.wait import WebDriverWait
 
 
 class PESUAcademy:
@@ -23,10 +25,13 @@ class PESUAcademy:
             "Biotechnology": "BT",
         }
 
-    def init_chrome(self):
+    def init_chrome(self, headless: bool = True):
         logging.info("Initializing Chrome")
         self.chrome_options = webdriver.ChromeOptions()
-        self.chrome_options.add_argument("--headless")
+
+        if headless:
+            self.chrome_options.add_argument("--headless")
+
         self.chrome_options.add_argument("--window-size=1920x1080")
         self.chrome_options.add_argument("--no-sandbox")
         self.chrome_options.add_argument("--disable-dev-shm-usage")
@@ -54,7 +59,50 @@ class PESUAcademy:
     def map_branch_to_short_code(self, branch: str) -> Optional[str]:
         return self.branch_short_code_map.get(branch)
 
-    def authenticate(self, username: str, password: str, profile: bool = False) -> dict[str, Any]:
+    def get_profile_details(self, username: Optional[str] = None) -> dict[str, Any]:
+        try:
+            logging.info("Navigating to profile data")
+            menu_options = self.chrome.find_elements(By.CLASS_NAME, "menu-name")
+            for option in menu_options:
+                if option.text == "My Profile":
+                    option.click()
+                    break
+            time.sleep(3)
+            self.chrome.implicitly_wait(3)
+        except Exception as e:
+            logging.error(f"Unable to find the profile button: {traceback.format_exc()}")
+            self.chrome.quit()
+            return {"status": False, "message": "Unable to find the profile button after login.", "error": str(e)}
+
+        try:
+            logging.info("Fetching profile data from page")
+            profile = dict()
+            for field in self.chrome.find_elements(By.CLASS_NAME, "form-group")[6:13]:
+                if (text := field.text) and "\n" in text:
+                    key, value = list(map(str.strip, text.split("\n")))
+                    key = "_".join(key.split()).lower()
+                    if key in ["name", "srn", "pesu_id", "srn", "program", "branch", "semester", "section"]:
+                        if key == "branch" and (branch_short_code := self.map_branch_to_short_code(value)):
+                            profile["branch_short_code"] = branch_short_code
+                        key = "prn" if key == "pesu_id" else key
+                        profile[key] = value
+
+            # if username starts with PES1, then he is from RR campus, else if it is PES2, then EC campus
+            key = username if username else profile["pesu_id"]
+            if campus_code_match := re.match(r"PES(\d)", key):
+                campus_code = campus_code_match.group(1)
+                profile["campus_code"] = int(campus_code)
+                profile["campus"] = "RR" if campus_code == "1" else "EC"
+
+            logging.info("Profile data fetched successfully")
+            self.chrome.quit()
+            return {"status": True, "profile": profile, "message": "Login successful."}
+        except Exception as e:
+            logging.error(f"Unable to fetch profile data: {traceback.format_exc()}")
+            self.chrome.quit()
+            return {"status": False, "message": "Unable to fetch profile data.", "error": str(e)}
+
+    def authenticate_credentials(self, username: str, password: str, profile: bool = False) -> dict[str, Any]:
         self.init_chrome()
 
         try:
@@ -96,44 +144,40 @@ class PESUAcademy:
             logging.info("Login successful")
 
         if profile:
-            try:
-                logging.info("Navigating to profile data")
-                menu_options = self.chrome.find_elements(By.CLASS_NAME, "menu-name")
-                for option in menu_options:
-                    if option.text == "My Profile":
-                        option.click()
-                        break
-                time.sleep(3)
-                self.chrome.implicitly_wait(3)
-            except Exception as e:
-                logging.error(f"Unable to find the profile button: {traceback.format_exc()}")
-                self.chrome.quit()
-                return {"status": False, "message": "Unable to find the profile button after login.", "error": str(e)}
+            return self.get_profile_details(username)
+        else:
+            self.chrome.quit()
+            return {"status": status, "message": "Login successful."}
 
-            try:
-                logging.info("Fetching profile data from page")
-                profile = dict()
-                for field in self.chrome.find_elements(By.CLASS_NAME, "form-group")[6:13]:
-                    if (text := field.text) and "\n" in text:
-                        key, value = list(map(str.strip, text.split("\n")))
-                        key = "_".join(key.split()).lower()
-                        if key in ["name", "srn", "pesu_id", "srn", "program", "branch", "semester", "section"]:
-                            if key == "branch" and (branch_short_code := self.map_branch_to_short_code(value)):
-                                profile["branch_short_code"] = branch_short_code
-                            profile[key] = value
+    def authenticate_interactive(self, profile: bool = False) -> dict[str, Any]:
+        self.init_chrome(headless=False)
 
-                # if username starts with PES1, then he is from RR campus, else if it is PES2, then EC campus
-                if campus_code_match := re.match(r"PES(\d)", username):
-                    campus_code = campus_code_match.group(1)
-                    profile["campus_code"] = campus_code
-                    profile["campus"] = "RR" if campus_code == "1" else "EC"
+        try:
+            logging.info("Connecting to PESU Academy")
+            self.chrome.get("https://pesuacademy.com/Academy")
+            self.chrome.implicitly_wait(3)
+            WebDriverWait(self.chrome, 10).until(
+                ec.element_to_be_clickable((By.ID, "postloginform#/Academy/j_spring_security_check")))
+        except Exception as e:
+            logging.error(f"Unable to connect to PESU Academy: {traceback.format_exc()}")
+            self.chrome.quit()
+            return {"status": False, "message": "Unable to connect to PESU Academy.", "error": str(e)}
 
-                logging.info("Profile data fetched successfully")
-                return {"status": status, "profile": profile, "message": "Login successful."}
-            except Exception as e:
-                logging.error(f"Unable to fetch profile data: {traceback.format_exc()}")
-                self.chrome.quit()
-                return {"status": False, "message": "Unable to fetch profile data.", "error": str(e)}
+        # wait for user to login manually
+        status = False
+        try:
+            logging.info("Waiting for user to login manually")
+            WebDriverWait(self.chrome, 90).until(
+                ec.url_contains("https://www.pesuacademy.com/Academy/s/studentProfilePESU"))
+            self.chrome.implicitly_wait(3)
+            status = True
+        except Exception as e:
+            logging.error(f"Unable to find the login form: {traceback.format_exc()}")
+            self.chrome.quit()
+            return {"status": False, "message": "Unable to find the login form.", "error": str(e)}
+
+        if profile:
+            return self.get_profile_details()
         else:
             self.chrome.quit()
             return {"status": status, "message": "Login successful."}

@@ -52,7 +52,7 @@ def authenticate():
     if username and password:
         username = username.strip()
         password = password.strip()
-        authentication_result = pesu_academy.authenticate(username, password, profile)
+        authentication_result = pesu_academy.authenticate_credentials(username, password, profile)
         authentication_result["timestamp"] = str(current_time)
         return json.dumps(authentication_result), 200
 
@@ -61,6 +61,17 @@ def authenticate():
         "status": False,
         "message": "Username or password not provided."
     }), 400
+
+
+@app.route("/authenticateInteractive", methods=["GET", "POST"])
+def authenticate_interactive():
+    profile = request.args.get("profile", False)
+    if isinstance(profile, str):
+        profile = profile.lower() == "true"
+    current_time = datetime.datetime.now(IST)
+    authentication_result = pesu_academy.authenticate_interactive(profile)
+    authentication_result["timestamp"] = str(current_time)
+    return json.dumps(authentication_result), 200
 
 
 if __name__ == "__main__":
