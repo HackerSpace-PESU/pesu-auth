@@ -2,6 +2,7 @@ import datetime
 import json
 import logging
 import os
+import re
 import traceback
 
 import gh_md_to_html
@@ -22,14 +23,17 @@ logging.basicConfig(
 
 
 def convert_readme_to_html():
-    html = gh_md_to_html.main("README.md").strip()
+    readme_content = open("README.md").read().strip()
+    readme_content = re.sub(r":\w+: ", "", readme_content)
+    with open("README_tmp.md", "w") as f:
+        f.write(readme_content)
+    html = gh_md_to_html.main("README_tmp.md").strip()
     with open("README.html", "w") as f:
         f.write(html)
 
 
 @app.route("/")
 def index():
-    # TODO: Fix this - replace with SwaggerUI
     try:
         if "README.html" not in os.listdir():
             convert_readme_to_html()
@@ -74,8 +78,6 @@ def authenticate_interactive():
     authentication_result["timestamp"] = str(current_time)
     return json.dumps(authentication_result), 200
 
-
-# TODO: Add routes for all possible auth methods
 
 if __name__ == "__main__":
     pesu_academy = PESUAcademy()
