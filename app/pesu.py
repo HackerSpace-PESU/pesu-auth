@@ -19,7 +19,7 @@ class PESUAcademy:
         self.chrome: Optional[webdriver.Chrome] = None
         self.chrome_options: Optional[webdriver.ChromeOptions] = None
 
-        self.branch_short_code_map = {
+        self.branch_short_code_map: dict[str, str] = {
             "Computer Science and Engineering": "CSE",
             "Electronics and Communication Engineering": "ECE",
             "Mechanical Engineering": "ME",
@@ -29,7 +29,7 @@ class PESUAcademy:
         }
 
     def init_chrome(self, headless: bool = True):
-        logging.info("Initializing Chrome")
+        logging.info(f"Initializing Chrome with headless={headless}")
         self.chrome_options = webdriver.ChromeOptions()
 
         if headless:
@@ -62,7 +62,7 @@ class PESUAcademy:
     def map_branch_to_short_code(self, branch: str) -> Optional[str]:
         return self.branch_short_code_map.get(branch)
 
-    def get_profile_details_selenium(self, username: Optional[str] = None) -> dict[str, Any]:
+    def get_profile_information_from_selenium(self, username: Optional[str] = None) -> dict[str, Any]:
         try:
             logging.info("Navigating to profile data")
             menu_options = self.chrome.find_elements(By.CLASS_NAME, "menu-name")
@@ -105,7 +105,7 @@ class PESUAcademy:
             self.chrome.quit()
             return {"status": False, "message": "Unable to fetch profile data.", "error": str(e)}
 
-    def get_profile_details_requests(
+    def get_profile_information_from_requests(
             self,
             session: requests_html.HTMLSession,
             username: Optional[str] = None
@@ -155,11 +155,15 @@ class PESUAcademy:
         return {"status": True, "profile": profile, "message": "Login successful."}
 
     @staticmethod
-    def get_profile_know_your_class_and_section(
-            session: requests_html.HTMLSession,
-            csrf_token: Optional[str],
-            username: Optional[str] = None
+    def get_know_your_class_and_section(
+            username: str,
+            session: Optional[requests_html.HTMLSession] = None,
+            csrf_token: Optional[str] = None,
     ) -> dict[str, Any]:
+
+        if not session:
+            session = requests_html.HTMLSession()
+
         if not csrf_token:
             home_url = "https://www.pesuacademy.com/Academy/"
             response = session.get(home_url)
@@ -189,7 +193,7 @@ class PESUAcademy:
                     "loginId": username
                 }
             )
-        except Exception as e:
+        except Exception:
             logging.error(f"Unable to get profile from Know Your Class and Section: {traceback.format_exc()}")
             return {}
 
@@ -209,6 +213,7 @@ class PESUAcademy:
             password: str,
             profile: bool = False
     ) -> dict[str, Any]:
+        logging.warning("This method is deprecated and will be removed in future versions.")
 
         self.init_chrome()
         try:
@@ -250,7 +255,10 @@ class PESUAcademy:
             logging.info("Login successful")
 
         if profile:
-            return self.get_profile_details_selenium(username)
+            result = self.get_profile_information_from_selenium(username)
+            know_your_class_and_section_data = self.get_know_your_class_and_section(username)
+            result["know_your_class_and_section"] = know_your_class_and_section_data
+            return result
         else:
             self.chrome.quit()
             return {"status": status, "message": "Login successful."}
@@ -270,7 +278,6 @@ class PESUAcademy:
             return {"status": False, "message": "Unable to connect to PESU Academy.", "error": str(e)}
 
         # wait for user to login manually
-        status = False
         try:
             logging.info("Waiting for user to login manually")
             WebDriverWait(self.chrome, 90).until(
@@ -283,7 +290,7 @@ class PESUAcademy:
             return {"status": False, "message": "Unable to find the login form.", "error": str(e)}
 
         if profile:
-            return self.get_profile_details_selenium()
+            return self.get_profile_information_from_selenium()
         else:
             self.chrome.quit()
             return {"status": status, "message": "Login successful."}
@@ -332,11 +339,11 @@ class PESUAcademy:
         csrf_token = soup.find("meta", attrs={"name": "csrf-token"})["content"]
 
         if profile:
-            result = self.get_profile_details_requests(session, username)
-            know_your_class_and_section_data = self.get_profile_know_your_class_and_section(
+            result = self.get_profile_information_from_requests(session, username)
+            know_your_class_and_section_data = self.get_know_your_class_and_section(
+                username,
                 session,
-                csrf_token,
-                username
+                csrf_token
             )
             result["know_your_class_and_section"] = know_your_class_and_section_data
             return result

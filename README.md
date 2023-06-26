@@ -26,13 +26,14 @@ On authentication, it returns the following parameters in a JSON object. If the 
 profile data was requested, the response's `profile` key will store a dictionary with a user's profile information.
 **On an unsuccessful sign-in, this field will not exist**.
 
-| **Field**   | **Type**        | **Description**                                                          |
-|-------------|-----------------|--------------------------------------------------------------------------|
-| `status`    | `boolean`       | A flag indicating whether the overall request was successful             |
-| `profile`   | `ProfileObject` | A nested map storing the profile information, returned only if requested |
-| `message`   | `str`           | A message that provides information corresponding to the status          |
-| `timestamp` | `datetime`      | A timezone offset timestamp indicating the time of authentication        |
-| `error`     | `str`           | The error name and stack trace, if an application side error occurs      |
+| **Field**                     | **Type**                        | **Description**                                                                             |
+|-------------------------------|---------------------------------|---------------------------------------------------------------------------------------------|
+| `status`                      | `boolean`                       | A flag indicating whether the overall request was successful                                |
+| `profile`                     | `ProfileObject`                 | A nested map storing the profile information, returned only if requested                    |
+| `know_your_class_and_section` | `KnowYourClassAndSectionObject` | A nested map storing the profile information from PESU's Know Your Class and Section Portal |
+| `message`                     | `str`                           | A message that provides information corresponding to the status                             |
+| `timestamp`                   | `datetime`                      | A timezone offset timestamp indicating the time of authentication                           |
+| `error`                       | `str`                           | The error name and stack trace, if an application side error occurs                         |
 
 #### Profile Object
 
@@ -48,6 +49,20 @@ profile data was requested, the response's `profile` key will store a dictionary
 | `section`           | Section of the user                                    |
 | `campus_code`       | The integer code of the campus (1 for RR and 2 for EC) |
 | `campus`            | Abbreviation of the user's campus name                 |
+
+#### KnowYourClassAndSectionObject
+
+| **Field**        | **Description**                                                |
+|------------------|----------------------------------------------------------------|
+| `prn`            | PRN of the user                                                |
+| `srn`            | SRN of the user                                                |
+| `name`           | Name of the user                                               |
+| `class`          | Current semester that the user is in                           |
+| `section`        | Section of the user                                            |
+| `cycle`          | Physics Cycle or Chemistry Cycle, if the user is in first year |
+| `department`     | Abbreviation of the branch along with the campus of the user   |
+| `branch`         | Abbreviation of the branch that the user is pursuing           |
+| `institute_name` | The name of the campus that the user is studying in            |
 
 <details><summary>Here is an example using Python</summary>
 
@@ -84,6 +99,17 @@ print(response.json())
     "campus_code": 1,
     "campus": "RR"
   },
+  "know_your_class_and_section": {
+        "prn": "PES1201800001",
+        "srn": "PES1201800001",
+        "name": "Johnny Blaze",
+        "class": "Sem-1",
+        "section": "Section A",
+        "cycle": "NA",
+        "department": "CSE (RR Campus)",
+        "branch": "CSE",
+        "institute_name": "PES University (Ring Road)"
+    },
   "message": "Login successful.",
   "timestamp": "2023-06-18 20:57:59.979374+05:30"
 }
@@ -94,10 +120,11 @@ print(response.json())
 ## Interactive Mode
 
 You can also use interactive mode which will spawn a browser window and allow the user to sign in to PESU Academy. Send
-a request to the `authenticateInteractive` endpoint with the `profile` query parameter set to `true` and the API will return
+a request to the `authenticateInteractive` endpoint with the `profile` query parameter set to `true` and the API will
+return
 a JSON object with the user's profile information.
 
-> :warning: **Warning:** This will only work if the API is running on the same server as the client. 
+> :warning: **Warning:** This will only work if the API is running on the same server as the client.
 
 <details><summary>Here is an example using Python</summary>
 
