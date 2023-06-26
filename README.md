@@ -5,6 +5,14 @@ A simple API to authenticate PESU credentials using PESU Academy
 The API is secure and protects user privacy by not storing any user credentials. It only validates credentials and
 returns the user's profile information.
 
+### PESUAuth LIVE Deployment
+
+* You can access the PESUAuth API endpoint [here](https://pesu-auth.onrender.com/).
+* You can view the health status of the API on the [PESUAuth Health Dashboard](https://xzlk85cp.status.cron-job.org/).
+
+> :warning: **Warning:** The live version is hosted on a free tier server, so you might experience some latency on the
+> first request since the server might not be awake. Subsequent requests will be faster.
+
 # How to use pesu-auth
 
 ## Non-Interactive Mode
