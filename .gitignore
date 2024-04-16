@@ -6,3 +6,5 @@ images/
 *.log
 README.html
 README_tmp*
+
+.venv
