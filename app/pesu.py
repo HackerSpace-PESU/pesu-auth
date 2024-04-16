@@ -145,8 +145,8 @@ class PESUAcademy:
                 key = "prn" if key == "pesu_id" else key
                 profile[key] = value
 
-        profile["email"] = soup.find("input", attrs={"id": "updateMail"})["value"]
-        profile["phone"] = soup.find("input", attrs={"id": "updateContact"})["value"]
+        profile["email"] = soup.find("input", attrs={"id": "updateMail"}).get("value")
+        profile["phone"] = soup.find("input", attrs={"id": "updateContact"}).get("value")
 
         # if username starts with PES1, then he is from RR campus, else if it is PES2, then EC campus
         key = username if username else profile["pesu_id"]
