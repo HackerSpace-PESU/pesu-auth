@@ -30,6 +30,7 @@ def convert_readme_to_html():
     html = gh_md_to_html.main("README_tmp.md").strip()
     with open("README.html", "w") as f:
         f.write(html)
+    os.remove("README_tmp.md")
 
 
 @app.route("/")
@@ -81,4 +82,5 @@ def authenticate_interactive():
 
 if __name__ == "__main__":
     pesu_academy = PESUAcademy()
+    convert_readme_to_html()
     app.run(host="0.0.0.0", port=5000)
