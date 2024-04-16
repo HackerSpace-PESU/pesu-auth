@@ -55,6 +55,8 @@ profile data was requested, the response's `profile` key will store a dictionary
 | `branch`            | Complete name of the branch that the user is pursuing  |
 | `semester`          | Current semester that the user is in                   |
 | `section`           | Section of the user                                    |
+| `email`             | Email address of the user registered with PESU         |
+| `phone`             | Phone number of the user registered with PESU          |
 | `campus_code`       | The integer code of the campus (1 for RR and 2 for EC) |
 | `campus`            | Abbreviation of the user's campus name                 |
 
