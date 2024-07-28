@@ -13,12 +13,53 @@ returns the user's profile information.
 > :warning: **Warning:** The live version is hosted on a free tier server, so you might experience some latency on the
 > first request since the server might not be awake. Subsequent requests will be faster.
 
+## How to run pesu-auth locally
+
+Running the PESUAuth API locally is simple. Clone the repository and follow the steps below to get started.
+
+### Running with Docker
+
+This is the easiest and recommended way to run the API locally. Ensure you have Docker installed on your system. Run the
+following commands to start the API.
+
+1. Build the Docker image
+
+  ```bash
+  docker build . --tag pesu-auth
+  ```
+
+2. Run the Docker container
+
+  ```bash
+  docker run --name pesu-auth -d -p 5000:5000 pesu-auth
+  ```
+
+3. Access the API at `http://localhost:5000/`
+
+### Running without Docker
+
+If you don't have Docker installed, you can run the API using Python. Ensure you have Python 3.8 or higher installed on
+your system.
+
+1. Create a virtual environment using `conda` or any other virtual environment manager of your choice and activate it.
+   Then, install the dependencies using the following command.
+
+  ```bash
+  pip install -r requirements.txt
+  ```
+
+2. Run the API using the following command.
+
+  ```bash
+  python app/app.py
+  ```
+
+3. Access the API at `http://localhost:5000/`
+
 # How to use pesu-auth
 
-## Non-Interactive Mode
-
-This is the most common and recommended way to use the API. You can send a request to `/authenticate` endpoint with the
-user's credentials and the API will return a JSON object, with the user's profile information if requested.
+You can send a request to the `/authenticate` endpoint with the user's credentials and the API will return a JSON object,
+with the user's profile information if requested.
 
 ### Request Parameters
 
@@ -84,7 +125,7 @@ import requests
 data = {
     'username': 'your SRN or PRN here',
     'password': 'your password here',
-    'profile': False  # Optional, defaults to False
+    'profile': True  # Optional, defaults to False
     # Set to True if you want to retrieve the user's profile information
 }
 
@@ -104,47 +145,28 @@ print(response.json())
     "program": "Bachelor of Technology",
     "branch_short_code": "CSE",
     "branch": "Computer Science and Engineering",
-    "semester": "Sem-1",
-    "section": "Section A",
+    "semester": "NA",
+    "section": "NA",
+    "email": "johnnyblaze@gmail.com",
+    "phone": "1234567890",
     "campus_code": 1,
     "campus": "RR"
   },
-  "know_your_class_and_section": {
-        "prn": "PES1201800001",
-        "srn": "PES1201800001",
-        "name": "Johnny Blaze",
-        "class": "Sem-1",
-        "section": "Section A",
-        "cycle": "NA",
-        "department": "CSE (RR Campus)",
-        "branch": "CSE",
-        "institute_name": "PES University (Ring Road)"
-    },
   "message": "Login successful.",
-  "timestamp": "2023-06-18 20:57:59.979374+05:30"
+  "know_your_class_and_section": {
+    "prn": "PES1201800001",
+    "srn": "PES1201800001",
+    "name": "JOHNNY BLAZE",
+    "class": "",
+    "section": "",
+    "cycle": "NA",
+    "department": "",
+    "branch": "CSE",
+    "institute_name": ""
+  },
+  "timestamp": "2024-07-28 22:30:10.103368+05:30"
 }
 ```
 
 </details>
 
-## Interactive Mode
-
-You can also use interactive mode which will spawn a browser window and allow the user to sign in to PESU Academy. Send
-a request to the `authenticateInteractive` endpoint with the `profile` query parameter set to `true` and the API will
-return
-a JSON object with the user's profile information.
-
-> :warning: **Warning:** This will only work if the API is running on the same server as the client.
-
-<details><summary>Here is an example using Python</summary>
-
-#### Request
-
-```python
-import requests
-
-response = requests.post("http://localhost:5000/authenticateInteractive?profile=true")
-print(response.json())
-```
-
-</details>
