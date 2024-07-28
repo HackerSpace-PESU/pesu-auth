@@ -1,6 +1,6 @@
 name: Docker Image Build
 
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 jobs:
 
@@ -9,8 +9,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Build the Docker image
-      run: docker build . --tag pesu-auth
-    - name: Spawn a container
-      run: docker run --name pesu-auth -d -p 5000:5000 pesu-auth
+      - uses: actions/checkout@v3
+      - name: Build the Docker image
+        run: docker build . --tag pesu-auth
+      - name: Spawn a container
+        run: docker run --name pesu-auth -d -p 5000:5000 pesu-auth

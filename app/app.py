@@ -23,6 +23,9 @@ logging.basicConfig(
 
 
 def convert_readme_to_html():
+    """
+    Convert the README.md file to HTML and save it as README.html so that it can be rendered on the home page.
+    """
     readme_content = open("README.md").read().strip()
     readme_content = re.sub(r":\w+: ", "", readme_content)
     with open("README_tmp.md", "w") as f:
@@ -34,6 +37,9 @@ def convert_readme_to_html():
 
 @app.route("/")
 def index():
+    """
+    Render the home page with the README.md content.
+    """
     try:
         if "README.html" not in os.listdir():
             convert_readme_to_html()
@@ -48,6 +54,9 @@ def index():
 
 @app.route("/authenticate", methods=["POST"])
 def authenticate():
+    """
+    Authenticate the user with the provided username and password.
+    """
     username = request.json.get("username")
     password = request.json.get("password")
     profile = request.json.get("profile", False)
@@ -62,21 +71,10 @@ def authenticate():
         return json.dumps(authentication_result), 200
 
     # if either username or password is not provided, we return an error
-    return json.dumps({
-        "status": False,
-        "message": "Username or password not provided."
-    }), 400
-
-
-@app.route("/authenticateInteractive", methods=["GET", "POST"])
-def authenticate_interactive():
-    profile = request.args.get("profile", False)
-    if isinstance(profile, str):
-        profile = profile.lower() == "true"
-    current_time = datetime.datetime.now(IST)
-    authentication_result = pesu_academy.authenticate_selenium_interactive(profile)
-    authentication_result["timestamp"] = str(current_time)
-    return json.dumps(authentication_result), 200
+    return (
+        json.dumps({"status": False, "message": "Username or password not provided."}),
+        400,
+    )
 
 
 if __name__ == "__main__":
