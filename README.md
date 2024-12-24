@@ -3,7 +3,7 @@
 A simple API to authenticate PESU credentials using PESU Academy
 
 The API is secure and protects user privacy by not storing any user credentials. It only validates credentials and
-returns the user's profile information.
+returns the user's profile information. No personal data is stored or logged.
 
 ### PESUAuth LIVE Deployment
 
@@ -58,16 +58,19 @@ your system.
 
 # How to use pesu-auth
 
-You can send a request to the `/authenticate` endpoint with the user's credentials and the API will return a JSON object,
+You can send a request to the `/authenticate` endpoint with the user's credentials and the API will return a JSON
+object,
 with the user's profile information if requested.
 
 ### Request Parameters
 
-| **Parameter** | **Optional** | **Type**  | **Default** | **Description**                      |
-|---------------|--------------|-----------|-------------|--------------------------------------|
-| `username`    | No           | `str`     |             | The user's SRN or PRN                |
-| `password`    | No           | `str`     |             | The user's password                  |
-| `profile`     | Yes          | `boolean` | `False`     | Whether to fetch profile information |
+| **Parameter**                 | **Optional** | **Type**    | **Default** | **Description**                                                                                 |
+|-------------------------------|--------------|-------------|-------------|-------------------------------------------------------------------------------------------------|
+| `username`                    | No           | `str`       |             | The user's SRN or PRN                                                                           |
+| `password`                    | No           | `str`       |             | The user's password                                                                             |
+| `profile`                     | Yes          | `boolean`   | `False`     | Whether to fetch profile information                                                            |
+| `know_your_class_and_section` | Yes          | `boolean`   | `False`     | Whether to fetch Know Your Class and Section information                                        |
+| `fields`                      | Yes          | `list[str]` | `None`      | Which fields to fetch from the profile information. If not provided, all fields will be fetched |
 
 ### Response Object
 
@@ -100,6 +103,7 @@ profile data was requested, the response's `profile` key will store a dictionary
 | `phone`             | Phone number of the user registered with PESU          |
 | `campus_code`       | The integer code of the campus (1 for RR and 2 for EC) |
 | `campus`            | Abbreviation of the user's campus name                 |
+| `error`             | The error name and stack trace, if an error occurs     |
 
 #### KnowYourClassAndSectionObject
 
@@ -114,8 +118,13 @@ profile data was requested, the response's `profile` key will store a dictionary
 | `department`     | Abbreviation of the branch along with the campus of the user   |
 | `branch`         | Abbreviation of the branch that the user is pursuing           |
 | `institute_name` | The name of the campus that the user is studying in            |
+| `error`          | The error name and stack trace, if an error occurs             |
 
-<details><summary>Here is an example using Python</summary>
+## Integrating your application with pesu-auth
+
+Here are some examples of how you can integrate your application with the PESUAuth API using Python and cURL.
+
+### Python
 
 #### Request
 
@@ -125,8 +134,9 @@ import requests
 data = {
     'username': 'your SRN or PRN here',
     'password': 'your password here',
-    'profile': True  # Optional, defaults to False
-    # Set to True if you want to retrieve the user's profile information
+    'profile': True,  # Optional, defaults to False
+    'know_your_class_and_section': True,  # Optional, defaults to False
+    'fields': None,  # Optional, defaults to None to represent all fields
 }
 
 response = requests.post("http://localhost:5000/authenticate", json=data)
@@ -168,5 +178,25 @@ print(response.json())
 }
 ```
 
-</details>
+### cURL
 
+#### Request
+
+```bash
+curl -X POST http://localhost:5000/authenticate \
+-H "Content-Type: application/json" \
+-d '{
+    "username": "your SRN or PRN here",
+    "password": "your password here"
+}'
+```
+
+#### Response
+
+```json
+{
+  "status": true,
+  "message": "Login successful.",
+  "timestamp": "2024-07-28 22:30:10.103368+05:30"
+}
+```
