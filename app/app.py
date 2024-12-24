@@ -35,6 +35,39 @@ def convert_readme_to_html():
         f.write(html)
 
 
+def validate_input(
+    username: str,
+    password: str,
+    profile: bool,
+    know_your_class_and_section: bool,
+    fields: list[str],
+):
+    """
+    Validate the input provided by the user.
+    :param username: str: The username of the user.
+    :param password: str: The password of the user.
+    :param profile: bool: Whether to fetch the profile details of the user.
+    :param know_your_class_and_section: bool: Whether to fetch the class and section details of the user.
+    :param fields: dict: The fields to fetch from the user's profile.
+    """
+    assert username is not None, "Username not provided."
+    assert isinstance(username, str), "Username should be a string."
+    assert password is not None, "Password not provided."
+    assert isinstance(password, str), "Password should be a string."
+    assert isinstance(profile, bool), "Profile should be a boolean."
+    assert isinstance(
+        know_your_class_and_section, bool
+    ), "know_your_class_and_section should be a boolean."
+    assert fields is None or (
+        isinstance(fields, list) and fields
+    ), "Fields should be a non-empty list or None."
+    if fields is not None:
+        for field in fields:
+            assert (
+                isinstance(field, str) and field in pesu_academy.DEFAULT_FIELDS
+            ), f"Invalid field: '{field}'. Valid fields are: {pesu_academy.DEFAULT_FIELDS}."
+
+
 @app.route("/")
 def index():
     """
@@ -57,24 +90,44 @@ def authenticate():
     """
     Authenticate the user with the provided username and password.
     """
+    # Extract the input provided by the user
+    current_time = datetime.datetime.now(IST)
     username = request.json.get("username")
     password = request.json.get("password")
     profile = request.json.get("profile", False)
-    current_time = datetime.datetime.now(IST)
+    know_your_class_and_section = request.json.get("know_your_class_and_section", False)
+    fields = request.json.get("fields")
 
-    # try to log in only if both username and password are provided
-    if username and password:
-        username = username.strip()
-        password = password.strip()
-        authentication_result = pesu_academy.authenticate(username, password, profile)
+    # Validate the input provided by the user
+    try:
+        validate_input(username, password, profile, know_your_class_and_section, fields)
+    except Exception as e:
+        stacktrace = traceback.format_exc()
+        logging.error(f"Could not validate request data: {e}: {stacktrace}")
+        return (
+            json.dumps(
+                {
+                    "status": False,
+                    "message": f"Could not validate request data: {e}",
+                    "timestamp": str(current_time),
+                }
+            ),
+            400,
+        )
+
+    try:
+        authentication_result = pesu_academy.authenticate(
+            username, password, profile, know_your_class_and_section, fields
+        )
         authentication_result["timestamp"] = str(current_time)
         return json.dumps(authentication_result), 200
-
-    # if either username or password is not provided, we return an error
-    return (
-        json.dumps({"status": False, "message": "Username or password not provided."}),
-        400,
-    )
+    except Exception as e:
+        stacktrace = traceback.format_exc()
+        logging.error(f"Error authenticating user: {e}: {stacktrace}")
+        return (
+            json.dumps({"status": False, "message": f"Error authenticating user: {e}"}),
+            500,
+        )
 
 
 if __name__ == "__main__":
