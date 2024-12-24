@@ -120,7 +120,11 @@ profile data was requested, the response's `profile` key will store a dictionary
 | `institute_name` | The name of the campus that the user is studying in            |
 | `error`          | The error name and stack trace, if an error occurs             |
 
-<details><summary>Here is an example using Python</summary>
+## Integrating your application with pesu-auth
+
+Here are some examples of how you can integrate your application with the PESUAuth API using Python and cURL.
+
+### Python
 
 #### Request
 
@@ -174,9 +178,7 @@ print(response.json())
 }
 ```
 
-</details>
-
-<details><summary>Here is an example using cURL</summary>
+### cURL
 
 #### Request
 
@@ -198,7 +200,3 @@ curl -X POST http://localhost:5000/authenticate \
   "timestamp": "2024-07-28 22:30:10.103368+05:30"
 }
 ```
-
-</details>
-
-
