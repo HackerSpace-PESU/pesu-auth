@@ -115,6 +115,7 @@ def authenticate():
             400,
         )
 
+    # Authenticate the user
     try:
         authentication_result = pesu_academy.authenticate(
             username, password, profile, know_your_class_and_section, fields
