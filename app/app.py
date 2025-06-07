@@ -38,7 +38,7 @@ swagger_template = {
     },
     # "host": "localhost:5000",
     "basePath": "/",
-    "schemes": ["http", "https"],
+    "schemes": ["https", "http"],
 }
 swagger = Swagger(app, config=swagger_config, template=swagger_template)
 IST = pytz.timezone("Asia/Kolkata")
@@ -65,10 +65,10 @@ def convert_readme_to_html():
 
 
 def validate_input(
-    username: str,
-    password: str,
-    profile: bool,
-    fields: list[str],
+        username: str,
+        password: str,
+        profile: bool,
+        fields: list[str],
 ):
     """
     Validate the input provided by the user.
@@ -83,12 +83,12 @@ def validate_input(
     assert isinstance(password, str), "Password should be a string."
     assert isinstance(profile, bool), "Profile should be a boolean."
     assert fields is None or (
-        isinstance(fields, list) and fields
+            isinstance(fields, list) and fields
     ), "Fields should be a non-empty list or None."
     if fields is not None:
         for field in fields:
             assert (
-                isinstance(field, str) and field in pesu_academy.DEFAULT_FIELDS
+                    isinstance(field, str) and field in pesu_academy.DEFAULT_FIELDS
             ), f"Invalid field: '{field}'. Valid fields are: {pesu_academy.DEFAULT_FIELDS}."
 
 
