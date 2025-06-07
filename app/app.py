@@ -19,13 +19,13 @@ swagger_config = {
         {
             "endpoint": "v1",
             "route": "/v1.json",
-            "rule_filter": lambda rule: True,  # all in
-            "model_filter": lambda tag: True,  # all in
+            "rule_filter": lambda rule: True,
+            "model_filter": lambda tag: True,
         }
     ],
     "static_url_path": "/flasgger_static",
     "swagger_ui": True,
-    "specs_route": "/",  # This changes the route from /apidocs to /
+    "specs_route": "/",
 }
 # TODO: Add version to the API
 # TODO: Set host dynamically based on the machine's IP address or domain name
