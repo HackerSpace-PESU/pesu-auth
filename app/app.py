@@ -17,15 +17,15 @@ swagger_config = {
     "headers": [],
     "specs": [
         {
-            "endpoint": 'v1',
-            "route": '/v1.json',
+            "endpoint": "v1",
+            "route": "/v1.json",
             "rule_filter": lambda rule: True,  # all in
             "model_filter": lambda tag: True,  # all in
         }
     ],
     "static_url_path": "/flasgger_static",
     "swagger_ui": True,
-    "specs_route": "/"  # This changes the route from /apidocs to /
+    "specs_route": "/",  # This changes the route from /apidocs to /
 }
 # TODO: Add version to the API
 # TODO: Set host dynamically based on the machine's IP address or domain name
@@ -65,10 +65,10 @@ def convert_readme_to_html():
 
 
 def validate_input(
-        username: str,
-        password: str,
-        profile: bool,
-        fields: list[str],
+    username: str,
+    password: str,
+    profile: bool,
+    fields: list[str],
 ):
     """
     Validate the input provided by the user.
@@ -83,12 +83,12 @@ def validate_input(
     assert isinstance(password, str), "Password should be a string."
     assert isinstance(profile, bool), "Profile should be a boolean."
     assert fields is None or (
-            isinstance(fields, list) and fields
+        isinstance(fields, list) and fields
     ), "Fields should be a non-empty list or None."
     if fields is not None:
         for field in fields:
             assert (
-                    isinstance(field, str) and field in pesu_academy.DEFAULT_FIELDS
+                isinstance(field, str) and field in pesu_academy.DEFAULT_FIELDS
             ), f"Invalid field: '{field}'. Valid fields are: {pesu_academy.DEFAULT_FIELDS}."
 
 
