@@ -7,31 +7,13 @@ from typing import Any, Optional
 import requests_html
 from bs4 import BeautifulSoup
 
+from constants import PESUAcademyConstants
+
 
 class PESUAcademy:
     """
     Class to interact with the PESU Academy website.
     """
-
-    # Default fields to fetch from the profile and know your class and section data
-    DEFAULT_FIELDS = [
-        "name",
-        "prn",
-        "srn",
-        "program",
-        "branch_short_code",
-        "branch",
-        "semester",
-        "section",
-        "email",
-        "phone",
-        "campus_code",
-        "campus",
-        "class",
-        "cycle",
-        "department",
-        "institute_name",
-    ]
 
     @staticmethod
     def map_branch_to_short_code(branch: str) -> Optional[str]:
@@ -43,15 +25,7 @@ class PESUAcademy:
         logging.warning(
             "Branch short code mapping will be deprecated in future versions."
         )
-        branch_short_code_map: dict[str, str] = {
-            "Computer Science and Engineering": "CSE",
-            "Electronics and Communication Engineering": "ECE",
-            "Mechanical Engineering": "ME",
-            "Electrical and Electronics Engineering": "EEE",
-            "Civil Engineering": "CE",
-            "Biotechnology": "BT",
-        }
-        return branch_short_code_map.get(branch)
+        return PESUAcademyConstants.BRANCH_SHORT_CODES.get(branch)
 
     def get_profile_information(
         self, session: requests_html.HTMLSession, username: Optional[str] = None
@@ -146,9 +120,9 @@ class PESUAcademy:
         # Create a new session
         session = requests_html.HTMLSession()
         # Default fields to fetch if fields is not provided
-        fields = self.DEFAULT_FIELDS if fields is None else fields
+        fields = PESUAcademyConstants.DEFAULT_FIELDS if fields is None else fields
         # check if fields is not the default fields and enable field filtering
-        field_filtering = fields != self.DEFAULT_FIELDS
+        field_filtering = fields != PESUAcademyConstants.DEFAULT_FIELDS
 
         try:
             # Get the initial csrf token assigned to the user session when the home page is loaded
