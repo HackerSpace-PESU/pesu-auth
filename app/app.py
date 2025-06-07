@@ -39,7 +39,6 @@ def validate_input(
     username: str,
     password: str,
     profile: bool,
-    know_your_class_and_section: bool,
     fields: list[str],
 ):
     """
@@ -47,7 +46,6 @@ def validate_input(
     :param username: str: The username of the user.
     :param password: str: The password of the user.
     :param profile: bool: Whether to fetch the profile details of the user.
-    :param know_your_class_and_section: bool: Whether to fetch the class and section details of the user.
     :param fields: dict: The fields to fetch from the user's profile.
     """
     assert username is not None, "Username not provided."
@@ -55,9 +53,6 @@ def validate_input(
     assert password is not None, "Password not provided."
     assert isinstance(password, str), "Password should be a string."
     assert isinstance(profile, bool), "Profile should be a boolean."
-    assert isinstance(
-        know_your_class_and_section, bool
-    ), "know_your_class_and_section should be a boolean."
     assert fields is None or (
         isinstance(fields, list) and fields
     ), "Fields should be a non-empty list or None."
@@ -95,12 +90,11 @@ def authenticate():
     username = request.json.get("username")
     password = request.json.get("password")
     profile = request.json.get("profile", False)
-    know_your_class_and_section = request.json.get("know_your_class_and_section", False)
     fields = request.json.get("fields")
 
     # Validate the input provided by the user
     try:
-        validate_input(username, password, profile, know_your_class_and_section, fields)
+        validate_input(username, password, profile, fields)
     except Exception as e:
         stacktrace = traceback.format_exc()
         logging.error(f"Could not validate request data: {e}: {stacktrace}")
@@ -118,7 +112,7 @@ def authenticate():
     # Authenticate the user
     try:
         authentication_result = pesu_academy.authenticate(
-            username, password, profile, know_your_class_and_section, fields
+            username, password, profile, fields
         )
         authentication_result["timestamp"] = str(current_time)
         return json.dumps(authentication_result), 200

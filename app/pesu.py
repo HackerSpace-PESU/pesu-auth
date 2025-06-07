@@ -40,6 +40,9 @@ class PESUAcademy:
         :param branch: Branch name
         :return: Short code of the branch
         """
+        logging.warning(
+            "Branch short code mapping will be deprecated in future versions."
+        )
         branch_short_code_map: dict[str, str] = {
             "Computer Science and Engineering": "CSE",
             "Electronics and Communication Engineering": "ECE",
@@ -125,79 +128,11 @@ class PESUAcademy:
 
         return profile
 
-    @staticmethod
-    def get_know_your_class_and_section(
-        username: str,
-        session: Optional[requests_html.HTMLSession] = None,
-        csrf_token: Optional[str] = None,
-    ) -> dict[str, Any]:
-        """
-        Get the class and section information from the public Know Your Class and Section page.
-        :param username: Username of the user
-        :param session: The session object
-        :param csrf_token: The csrf token
-        :return: The class and section information
-        """
-
-        if not session:
-            # If a session is not provided, create a new session
-            session = requests_html.HTMLSession()
-
-        if not csrf_token:
-            # If csrf token is not provided, fetch the default csrf token assigned to the user session
-            home_url = "https://www.pesuacademy.com/Academy/"
-            response = session.get(home_url)
-            soup = BeautifulSoup(response.text, "lxml")
-            csrf_token = soup.find("meta", attrs={"name": "csrf-token"})["content"]
-
-        try:
-            # Make a post request to get the class and section information
-            response = session.post(
-                "https://www.pesuacademy.com/Academy/getStudentClassInfo",
-                headers={
-                    "authority": "www.pesuacademy.com",
-                    "accept": "*/*",
-                    "accept-language": "en-IN,en-US;q=0.9,en-GB;q=0.8,en;q=0.7",
-                    "content-type": "application/x-www-form-urlencoded",
-                    "origin": "https://www.pesuacademy.com",
-                    "referer": "https://www.pesuacademy.com/Academy/",
-                    "sec-ch-ua": '"Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"',
-                    "sec-ch-ua-mobile": "?0",
-                    "sec-ch-ua-platform": '"Linux"',
-                    "sec-fetch-dest": "empty",
-                    "sec-fetch-mode": "cors",
-                    "sec-fetch-site": "same-origin",
-                    "x-csrf-token": csrf_token,
-                    "x-requested-with": "XMLHttpRequest",
-                },
-                data={"loginId": username},
-            )
-        except Exception:
-            # Log the error and return an empty dictionary
-            logging.error(
-                f"Unable to get profile from Know Your Class and Section: {traceback.format_exc()}"
-            )
-            return {
-                "error": f"Unable to get profile from Know Your Class and Section: {traceback.format_exc()}"
-            }
-
-        soup = BeautifulSoup(response.text, "html.parser")
-        profile = dict()
-        for th, td in zip(soup.find_all("th"), soup.find_all("td")):
-            key = th.text.strip()
-            key = key.replace(" ", "_").lower()
-            value = td.text.strip()
-            profile[key] = value
-
-        # Return the class and section information
-        return profile
-
     def authenticate(
         self,
         username: str,
         password: str,
         profile: bool = False,
-        know_your_class_and_section: bool = False,
         fields: Optional[list[str]] = None,
     ) -> dict[str, Any]:
         """
@@ -205,7 +140,6 @@ class PESUAcademy:
         :param username: Username of the user, usually their PRN/email/phone number
         :param password: Password of the user
         :param profile: Whether to fetch the profile information or not
-        :param know_your_class_and_section : Whether to fetch the class and section information or not
         :param fields: The fields to fetch from the profile and know your class and section data. Defaults to all fields if not provided.
         :return: The authentication result
         """
@@ -280,19 +214,6 @@ class PESUAcademy:
                 result["profile"] = {
                     key: value
                     for key, value in result["profile"].items()
-                    if key in fields
-                }
-
-        if know_your_class_and_section:
-            # Fetch the class and section information
-            result["know_your_class_and_section"] = (
-                self.get_know_your_class_and_section(username, session, csrf_token)
-            )
-            # Filter the fields if field filtering is enabled
-            if field_filtering:
-                result["know_your_class_and_section"] = {
-                    key: value
-                    for key, value in result["know_your_class_and_section"].items()
                     if key in fields
                 }
 
