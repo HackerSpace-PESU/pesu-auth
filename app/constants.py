@@ -33,6 +33,6 @@ class PESUAcademyConstants:
             "Electrical and Electronics Engineering": "EEE",
             "Civil Engineering": "CE",
             "Biotechnology": "BT",
-            "Computer Science & Engineering (Artificial Intelligence & Machine Learning)":"CSE(AIML)"
+            "Computer Science and Engineering (AI&ML)":"CSE(AIML)",
         }
     )
