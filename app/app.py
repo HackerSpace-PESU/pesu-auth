@@ -96,14 +96,24 @@ def validate_input(
 @app.route("/readme")
 def readme():
     """
-    Render the home page with the README.md content.
+    Serve the rendered README.md as HTML.
+    ---
+    tags:
+      - Documentation
+    produces:
+      - text/html
+    responses:
+      200:
+        description: Successfully rendered README.md content
+      500:
+        description: Internal server error while retrieving README.md
     """
     try:
         if "README.html" not in os.listdir():
             convert_readme_to_html()
         with open("README.html") as f:
             output = f.read()
-            return output, 200
+            return output, 200, {"Content-Type": "text/html"}
     except Exception as e:
         stacktrace = traceback.format_exc()
         logging.error(f"Error rendering home page: {e}: {stacktrace}")
@@ -272,6 +282,7 @@ def authenticate():
                 }
             ),
             400,
+            {"Content-Type": "application/json"},
         )
 
     # Authenticate the user
@@ -280,13 +291,18 @@ def authenticate():
             username, password, profile, fields
         )
         authentication_result["timestamp"] = str(current_time)
-        return json.dumps(authentication_result), 200
+        return (
+            json.dumps(authentication_result),
+            200,
+            {"Content-Type": "application/json"},
+        )
     except Exception as e:
         stacktrace = traceback.format_exc()
         logging.error(f"Error authenticating user: {e}: {stacktrace}")
         return (
             json.dumps({"status": False, "message": f"Error authenticating user: {e}"}),
             500,
+            {"Content-Type": "application/json"},
         )
 
 
