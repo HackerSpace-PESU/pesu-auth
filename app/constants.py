@@ -28,6 +28,7 @@ class PESUAcademyConstants:
     BRANCH_SHORT_CODES: Dict[str, str] = field(
         default_factory=lambda: {
             "Computer Science and Engineering": "CSE",
+            "Computer Science and Engineering (AI&ML)": "CSE(AI&ML)",
             "Electronics and Communication Engineering": "ECE",
             "Mechanical Engineering": "ME",
             "Electrical and Electronics Engineering": "EEE",
