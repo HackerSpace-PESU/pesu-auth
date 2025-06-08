@@ -7,9 +7,10 @@ import traceback
 
 import gh_md_to_html
 import pytz
-from flask import Flask, request
 from flasgger import Swagger
+from flask import Flask, request
 
+from constants import PESUAcademyConstants
 from pesu import PESUAcademy
 
 app = Flask(__name__)
@@ -88,8 +89,8 @@ def validate_input(
     if fields is not None:
         for field in fields:
             assert (
-                isinstance(field, str) and field in pesu_academy.DEFAULT_FIELDS
-            ), f"Invalid field: '{field}'. Valid fields are: {pesu_academy.DEFAULT_FIELDS}."
+                isinstance(field, str) and field in PESUAcademyConstants.DEFAULT_FIELDS
+            ), f"Invalid field: '{field}'. Valid fields are: {PESUAcademyConstants.DEFAULT_FIELDS}."
 
 
 @app.route("/readme")
