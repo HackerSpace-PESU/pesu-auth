@@ -29,4 +29,5 @@ class PESUAcademyConstants:
         "Electrical and Electronics Engineering": "EEE",
         "Civil Engineering": "CE",
         "Biotechnology": "BT",
+        "Bachelor of Computer Applications": "BCA",
     }
