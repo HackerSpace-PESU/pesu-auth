@@ -30,4 +30,6 @@ class PESUAcademyConstants:
         "Civil Engineering": "CE",
         "Biotechnology": "BT",
         "Bachelor of Computer Applications": "BCA",
+        "BA LLB Hons": "BA LLB",
+        "Psychology": "Psychology",
     }
