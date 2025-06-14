@@ -1,4 +1,4 @@
-FROM python:3.10.11-bullseye
+FROM python:3.10-bullseye
 
 COPY app /app
 COPY README.md /README.md
