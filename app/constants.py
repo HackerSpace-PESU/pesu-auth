@@ -32,4 +32,5 @@ class PESUAcademyConstants:
         "Bachelor of Computer Applications": "BCA",
         "BA LLB": "BA LLB",
         "Psychology": "Psychology",
+        "Bachelor of Business Administration": "BBA",
     }
