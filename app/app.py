@@ -89,7 +89,7 @@ def readme():
             return output, 200, {"Content-Type": "text/html"}
     except Exception as e:
         stacktrace = traceback.format_exc()
-        logging.error(f"Error rendering home page: {e}: {stacktrace}")
+        logging.exception(f"Error rendering home page.")
         return "Error occurred while retrieving home page", 500
 
 
@@ -246,7 +246,7 @@ def authenticate():
         validate_input(username, password, profile, fields)
     except Exception as e:
         stacktrace = traceback.format_exc()
-        logging.error(f"Could not validate request data: {e}: {stacktrace}")
+        logging.exception(f"Could not validate request data.")
         return (
             json.dumps(
                 {
@@ -273,7 +273,7 @@ def authenticate():
         )
     except Exception as e:
         stacktrace = traceback.format_exc()
-        logging.error(f"Error authenticating user: {e}: {stacktrace}")
+        logging.exception(f"Error authenticating user.")
         return (
             json.dumps({"status": False, "message": f"Error authenticating user: {e}"}),
             500,

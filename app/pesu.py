@@ -62,7 +62,7 @@ class PESUAcademy:
             soup = BeautifulSoup(response.text, "lxml")
 
         except Exception as e:
-            logging.error(f"Unable to fetch profile data: {traceback.format_exc()}")
+            logging.exception(f"Unable to fetch profile data.")
             return {"error": f"Unable to fetch profile data: {traceback.format_exc()}"}
 
         profile = dict()
@@ -146,7 +146,7 @@ class PESUAcademy:
             logging.debug(f"CSRF token fetched: {csrf_token}")
         except Exception as e:
             # Log the error and return the error message
-            logging.error(f"Unable to fetch csrf token: {traceback.format_exc()}")
+            logging.exception(f"Unable to fetch csrf token.")
             session.close()
             return {
                 "status": False,
@@ -170,7 +170,7 @@ class PESUAcademy:
             logging.debug("Authentication response received.")
         except Exception as e:
             # Log the error and return the error message
-            logging.error(f"Unable to authenticate: {traceback.format_exc()}")
+            logging.exception(f"Unable to authenticate.")
             session.close()
             return {
                 "status": False,
@@ -181,7 +181,7 @@ class PESUAcademy:
         # If class login-form is present, login failed
         if soup.find("div", attrs={"class": "login-form"}):
             # Log the error and return the error message
-            logging.error("Login unsuccessful")
+            logging.error("Login unsuccessful. Invalid username or password.")
             session.close()
             return {
                 "status": False,
