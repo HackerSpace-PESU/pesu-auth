@@ -9,53 +9,19 @@ import gh_md_to_html
 import pytz
 from flasgger import Swagger
 from flask import Flask, request
+import argparse
 
 from constants import PESUAcademyConstants
 from pesu import PESUAcademy
 
 app = Flask(__name__)
-swagger_config = {
-    "headers": [],
-    "specs": [
-        {
-            "endpoint": "v1",
-            "route": "/v1.json",
-            "rule_filter": lambda rule: True,
-            "model_filter": lambda tag: True,
-        }
-    ],
-    "static_url_path": "/flasgger_static",
-    "swagger_ui": True,
-    "specs_route": "/",
-}
-# TODO: Add version to the API
-# TODO: Set host dynamically based on the machine's IP address or domain name
-swagger_template = {
-    "swagger": "2.0",
-    "info": {
-        "title": "PESU Auth API",
-        "description": "A simple API to authenticate PESU credentials using PESU Academy",
-        # "version": "1.0.0"
-    },
-    # "host": "localhost:5000",
-    "basePath": "/",
-    "schemes": ["https", "http"],
-}
-swagger = Swagger(app, config=swagger_config, template=swagger_template)
-IST = pytz.timezone("Asia/Kolkata")
-
-logging.basicConfig(
-    level=logging.INFO,
-    filename="app.log",
-    format="%(asctime)s - %(levelname)s - %(filename)s:%(funcName)s:%(threadName)s:%(lineno)d - %(message)s",
-    filemode="w",
-)
 
 
 def convert_readme_to_html():
     """
     Convert the README.md file to HTML and save it as README.html so that it can be rendered on the home page.
     """
+    logging.info("Beginning conversion of README.md to HTML...")
     readme_content = open("README.md").read().strip()
     readme_content = re.sub(r":\w+: ", "", readme_content)
     with open("README_tmp.md", "w") as f:
@@ -63,6 +29,7 @@ def convert_readme_to_html():
     html = gh_md_to_html.main("README_tmp.md").strip()
     with open("README.html", "w") as f:
         f.write(html)
+    logging.info("README.md converted to HTML successfully.")
 
 
 def validate_input(
@@ -78,6 +45,9 @@ def validate_input(
     :param profile: bool: Whether to fetch the profile details of the user.
     :param fields: dict: The fields to fetch from the user's profile.
     """
+    logging.info(
+        f"Validating input: username={username}, password={"*****" if password else None}, profile={profile}, fields={fields}"
+    )
     assert username is not None, "Username not provided."
     assert isinstance(username, str), "Username should be a string."
     assert password is not None, "Password not provided."
@@ -91,6 +61,7 @@ def validate_input(
             assert (
                 isinstance(field, str) and field in PESUAcademyConstants.DEFAULT_FIELDS
             ), f"Invalid field: '{field}'. Valid fields are: {PESUAcademyConstants.DEFAULT_FIELDS}."
+    logging.info("Input validation successful. All parameters are valid.")
 
 
 @app.route("/readme")
@@ -110,7 +81,9 @@ def readme():
     """
     try:
         if "README.html" not in os.listdir():
+            logging.info("README.html not found, converting README.md to HTML...")
             convert_readme_to_html()
+        logging.info("Rendering README.html...")
         with open("README.html") as f:
             output = f.read()
             return output, 200, {"Content-Type": "text/html"}
@@ -176,7 +149,7 @@ def authenticate():
                   - cycle
                   - department
                   - institute_name
-              example: ["name", "srn", "email", "branch"]
+              example: ["name", "prn", "branch", "branch_short_code", "campus"]
     responses:
       200:
         description: Authentication successful
@@ -269,6 +242,7 @@ def authenticate():
 
     # Validate the input provided by the user
     try:
+        logging.info(f"Received authentication request. Validating input...")
         validate_input(username, password, profile, fields)
     except Exception as e:
         stacktrace = traceback.format_exc()
@@ -287,6 +261,7 @@ def authenticate():
 
     # Authenticate the user
     try:
+        logging.info("Authenticating user with PESU Academy...")
         authentication_result = pesu_academy.authenticate(
             username, password, profile, fields
         )
@@ -307,5 +282,66 @@ def authenticate():
 
 
 if __name__ == "__main__":
+    # Set up argument parser for command line arguments
+    parser = argparse.ArgumentParser(
+        description="PESUAuth API - A simple API to authenticate PESU credentials using PESU Academy."
+    )
+    parser.add_argument(
+        "--host",
+        type=str,
+        default="0.0.0.0",
+        help="Host to run the Flask application on. Default is 0.0.0.0",
+    )
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=5000,
+        help="Port to run the Flask application on. Default is 5000",
+    )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Run the application in debug mode with detailed logging.",
+    )
+    args = parser.parse_args()
+
+    swagger_config = {
+        "headers": [],
+        "specs": [
+            {
+                "endpoint": "v1",
+                "route": "/v1.json",
+                "rule_filter": lambda rule: True,
+                "model_filter": lambda tag: True,
+            }
+        ],
+        "static_url_path": "/flasgger_static",
+        "swagger_ui": True,
+        "specs_route": "/",
+    }
+    # TODO: Add version to the API
+    # TODO: Set host dynamically based on the machine's IP address or domain name
+    swagger_template = {
+        "swagger": "2.0",
+        "info": {
+            "title": "PESU Auth API",
+            "description": "A simple API to authenticate PESU credentials using PESU Academy",
+            # "version": "1.0.0"
+        },
+        # "host": "localhost:5000",
+        "basePath": "/",
+        "schemes": ["https", "http"],
+    }
+    swagger = Swagger(app, config=swagger_config, template=swagger_template)
+    IST = pytz.timezone("Asia/Kolkata")
+
+    logging_level = logging.DEBUG if args.debug else logging.INFO
+    logging.basicConfig(
+        level=logging_level,
+        # filename="app.log",
+        format="%(asctime)s - %(levelname)s - %(filename)s:%(funcName)s:%(lineno)d - %(message)s",
+        filemode="w",
+    )
+
     pesu_academy = PESUAcademy()
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host=args.host, port=args.port, debug=args.debug)
