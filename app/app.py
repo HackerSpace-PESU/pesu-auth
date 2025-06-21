@@ -46,7 +46,7 @@ def validate_input(
     :param fields: dict: The fields to fetch from the user's profile.
     """
     logging.info(
-        f"Validating input: username={username}, password={"*****" if password else None}, profile={profile}, fields={fields}"
+        f"Validating input: username={username}, password={'*****' if password else None}, profile={profile}, fields={fields}"
     )
     assert username is not None, "Username not provided."
     assert isinstance(username, str), "Username should be a string."

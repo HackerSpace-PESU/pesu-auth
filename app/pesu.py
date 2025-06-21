@@ -4,7 +4,6 @@ import traceback
 from datetime import datetime
 from typing import Any, Optional
 
-from attr import field
 import requests_html
 from bs4 import BeautifulSoup
 
