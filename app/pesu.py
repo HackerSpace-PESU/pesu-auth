@@ -107,7 +107,7 @@ class PESUAcademy:
             profile["campus"] = "RR" if campus_code == "1" else "EC"
 
         logging.info(
-            f"Complete profile information retrieved for PRN={profile.get('prn')}:\n{profile}"
+            f"Complete profile information retrieved for PRN: {profile.get('prn')}: {profile}"
         )
         return profile
 

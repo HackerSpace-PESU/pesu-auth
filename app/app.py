@@ -338,7 +338,6 @@ if __name__ == "__main__":
     logging_level = logging.DEBUG if args.debug else logging.INFO
     logging.basicConfig(
         level=logging_level,
-        # filename="app.log",
         format="%(asctime)s - %(levelname)s - %(filename)s:%(funcName)s:%(lineno)d - %(message)s",
         filemode="w",
     )
