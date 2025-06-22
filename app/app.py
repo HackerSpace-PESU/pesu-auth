@@ -14,6 +14,7 @@ import argparse
 from app.constants import PESUAcademyConstants
 from app.pesu import PESUAcademy
 
+IST = pytz.timezone("Asia/Kolkata")
 app = Flask(__name__)
 
 
@@ -333,7 +334,6 @@ if __name__ == "__main__":
         "schemes": ["https", "http"],
     }
     swagger = Swagger(app, config=swagger_config, template=swagger_template)
-    IST = pytz.timezone("Asia/Kolkata")
 
     logging_level = logging.DEBUG if args.debug else logging.INFO
     logging.basicConfig(
