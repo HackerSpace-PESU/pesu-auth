@@ -7,7 +7,7 @@ from typing import Any, Optional
 import requests_html
 from bs4 import BeautifulSoup
 
-from constants import PESUAcademyConstants
+from app.constants import PESUAcademyConstants
 
 
 class PESUAcademy:

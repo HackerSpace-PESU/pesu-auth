@@ -3,6 +3,7 @@
 __pycache__/
 github-markdown-css/
 images/
+.pytest_cache/
 *.log
 README.html
 README_tmp*
@@ -10,3 +11,4 @@ README_tmp*
 pyrightconfig.json
 *.bru
 bruno.json
+.coverage

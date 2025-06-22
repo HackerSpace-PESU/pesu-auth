@@ -11,10 +11,12 @@ from flasgger import Swagger
 from flask import Flask, request
 import argparse
 
-from constants import PESUAcademyConstants
-from pesu import PESUAcademy
+from app.constants import PESUAcademyConstants
+from app.pesu import PESUAcademy
 
+IST = pytz.timezone("Asia/Kolkata")
 app = Flask(__name__)
+pesu_academy = PESUAcademy()
 
 
 def convert_readme_to_html():
@@ -333,7 +335,6 @@ if __name__ == "__main__":
         "schemes": ["https", "http"],
     }
     swagger = Swagger(app, config=swagger_config, template=swagger_template)
-    IST = pytz.timezone("Asia/Kolkata")
 
     logging_level = logging.DEBUG if args.debug else logging.INFO
     logging.basicConfig(
@@ -342,5 +343,4 @@ if __name__ == "__main__":
         filemode="w",
     )
 
-    pesu_academy = PESUAcademy()
     app.run(host=args.host, port=args.port, debug=args.debug)
