@@ -16,6 +16,7 @@ from app.pesu import PESUAcademy
 
 IST = pytz.timezone("Asia/Kolkata")
 app = Flask(__name__)
+pesu_academy = PESUAcademy()
 
 
 def convert_readme_to_html():
@@ -342,5 +343,4 @@ if __name__ == "__main__":
         filemode="w",
     )
 
-    pesu_academy = PESUAcademy()
     app.run(host=args.host, port=args.port, debug=args.debug)

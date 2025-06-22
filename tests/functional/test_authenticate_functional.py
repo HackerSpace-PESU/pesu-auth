@@ -20,7 +20,7 @@ def test_authenticate_success(pesu_academy: PESUAcademy):
     assert "profile" not in result
 
 
-def test_authenticate_with_profile_specific_fields(pesu_academy: PESUAcademy):
+def test_authenticate_with_specific_profile_fields(pesu_academy: PESUAcademy):
     username = os.getenv("TEST_PRN")
     password = os.getenv("TEST_PASSWORD")
     branch = os.getenv("TEST_BRANCH")
@@ -53,6 +53,7 @@ def test_authenticate_with_profile_specific_fields(pesu_academy: PESUAcademy):
 
 
 def test_authenticate_with_all_profile_fields(pesu_academy: PESUAcademy):
+    name = os.getenv("TEST_NAME")
     username = os.getenv("TEST_PRN")
     password = os.getenv("TEST_PASSWORD")
     srn = os.getenv("TEST_SRN")
@@ -69,6 +70,7 @@ def test_authenticate_with_all_profile_fields(pesu_academy: PESUAcademy):
     cycle = os.getenv("TEST_CYCLE")
     department = os.getenv("TEST_DEPARTMENT")
 
+    assert name is not None, "TEST_NAME environment variable not set"
     assert username is not None, "TEST_PRN environment variable not set"
     assert password is not None, "TEST_PASSWORD environment variable not set"
     assert branch is not None, "TEST_BRANCH environment variable not set"
@@ -116,6 +118,7 @@ def test_authenticate_with_all_profile_fields(pesu_academy: PESUAcademy):
     for field in all_fields:
         assert field in profile, f"Field '{field}' missing in profile"
 
+    assert profile["name"] == name
     assert profile["prn"] == username
     assert profile["srn"] == srn
     assert profile["program"] == program
