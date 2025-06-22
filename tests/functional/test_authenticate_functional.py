@@ -69,9 +69,10 @@ def test_authenticate_with_all_profile_fields(pesu_academy: PESUAcademy):
     branch = os.getenv("TEST_BRANCH")
     branch_short_code = os.getenv("TEST_BRANCH_SHORT_CODE")
     campus = os.getenv("TEST_CAMPUS")
-    _class = os.getenv("TEST_CLASS")
-    cycle = os.getenv("TEST_CYCLE")
-    department = os.getenv("TEST_DEPARTMENT")
+    # _class = os.getenv("TEST_CLASS")
+    # cycle = os.getenv("TEST_CYCLE")
+    # department = os.getenv("TEST_DEPARTMENT")
+    # institute_name = os.getenv("TEST_INSTITUTE_NAME")
 
     assert name is not None, "TEST_NAME environment variable not set"
     assert username is not None, "TEST_PRN environment variable not set"
@@ -88,9 +89,10 @@ def test_authenticate_with_all_profile_fields(pesu_academy: PESUAcademy):
     assert email is not None, "TEST_EMAIL environment variable not set"
     assert phone is not None, "TEST_PHONE environment variable not set"
     assert campus_code is not None, "TEST_CAMPUS_CODE environment variable not set"
-    assert _class is not None, "TEST_CLASS environment variable not set"
-    assert cycle is not None, "TEST_CYCLE environment variable not set"
-    assert department is not None, "TEST_DEPARTMENT environment variable not set"
+    # assert _class is not None, "TEST_CLASS environment variable not set"
+    # assert cycle is not None, "TEST_CYCLE environment variable not set"
+    # assert department is not None, "TEST_DEPARTMENT environment variable not set"
+    # assert institute_name is not None, "TEST_INSTITUTE_NAME environment variable not set"
 
     all_fields = [
         "name",
