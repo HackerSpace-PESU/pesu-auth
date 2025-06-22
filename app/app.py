@@ -11,8 +11,8 @@ from flasgger import Swagger
 from flask import Flask, request
 import argparse
 
-from constants import PESUAcademyConstants
-from pesu import PESUAcademy
+from app.constants import PESUAcademyConstants
+from app.pesu import PESUAcademy
 
 app = Flask(__name__)
 
