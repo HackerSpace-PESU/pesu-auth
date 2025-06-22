@@ -1,0 +1,27 @@
+name: PyTest
+
+on: [ push, pull_request ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 5
+      matrix:
+        python-version: [ "3.9", "3.10", "3.11", "3.12" ]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        pip install pytest pytest-cov httpx
+
+    - name: Run tests with pytest
+      run: |
+        pytest --cov=app --cov-report=term-missing --cov-fail-under=80 --disable-warnings -v
+
