@@ -5,7 +5,6 @@ on: [ push, pull_request ]
 jobs:
   test:
     runs-on: ubuntu-latest
-    environment: Build
 
     strategy:
       max-parallel: 5
@@ -45,16 +44,5 @@ jobs:
 
     - name: Run tests with pytest
       run: |
-        echo "PRN = $TEST_PRN"
-        echo "PASSWORD = $TEST_PASSWORD"
-        echo "CAMPUS_CODE = $TEST_CAMPUS_CODE"
-        echo "CAMPUS = $TEST_CAMPUS"
-        echo "SEMESTER = $TEST_SEMESTER"
-        echo "SECTION = $TEST_SECTION"
-        echo "PROGRAM = $TEST_PROGRAM"
-        echo "BRANCH = $TEST_BRANCH"
-        echo "BRANCH_SHORT_CODE = $TEST_BRANCH_SHORT_CODE"
-        echo "EMAIL = $TEST_EMAIL"
-        echo "PHONE = $TEST_PHONE"
         echo "Running tests..."
         pytest --cov=app --cov-report=term-missing --cov-fail-under=80 --disable-warnings -v
