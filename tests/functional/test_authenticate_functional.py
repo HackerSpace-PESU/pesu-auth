@@ -8,6 +8,7 @@ def pesu_academy():
     return PESUAcademy()
 
 
+@pytest.mark.secret_required
 def test_authenticate_success(pesu_academy: PESUAcademy):
     username = os.getenv("TEST_PRN")
     password = os.getenv("TEST_PASSWORD")
@@ -20,6 +21,7 @@ def test_authenticate_success(pesu_academy: PESUAcademy):
     assert "profile" not in result
 
 
+@pytest.mark.secret_required
 def test_authenticate_with_specific_profile_fields(pesu_academy: PESUAcademy):
     username = os.getenv("TEST_PRN")
     password = os.getenv("TEST_PASSWORD")
@@ -52,6 +54,7 @@ def test_authenticate_with_specific_profile_fields(pesu_academy: PESUAcademy):
     assert "name" not in profile
 
 
+@pytest.mark.secret_required
 def test_authenticate_with_all_profile_fields(pesu_academy: PESUAcademy):
     name = os.getenv("TEST_NAME")
     username = os.getenv("TEST_PRN")

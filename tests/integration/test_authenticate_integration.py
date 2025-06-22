@@ -10,6 +10,7 @@ def client():
         yield client
 
 
+@pytest.mark.secret_required
 def test_integration_authenticate_success(client):
     payload = {
         "username": os.getenv("TEST_PRN"),
@@ -26,6 +27,7 @@ def test_integration_authenticate_success(client):
     assert data["message"] == "Login successful."
 
 
+@pytest.mark.secret_required
 def test_integration_authenticate_with_specific_profile_fields(client):
     username = os.getenv("TEST_PRN")
     password = os.getenv("TEST_PASSWORD")
@@ -67,6 +69,7 @@ def test_integration_authenticate_with_specific_profile_fields(client):
     assert "name" not in profile
 
 
+@pytest.mark.secret_required
 def test_integration_authenticate_with_all_profile_fields(client):
     name = os.getenv("TEST_NAME")
     username = os.getenv("TEST_PRN")
