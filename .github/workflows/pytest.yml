@@ -12,6 +12,7 @@ jobs:
         python-version: [ "3.9", "3.10", "3.11", "3.12" ]
 
     env:
+      TEST_NAME: ${{ secrets.TEST_NAME }}
       TEST_PRN: ${{ secrets.TEST_PRN }}
       TEST_SRN: ${{ secrets.TEST_SRN }}
       TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
