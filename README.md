@@ -1,5 +1,10 @@
 # pesu-auth
 
+[![Docker Image Build](https://github.com/HackerSpace-PESU/pesu-auth/actions/workflows/docker.yml/badge.svg)](https://github.com/HackerSpace-PESU/pesu-auth/actions/workflows/docker.yml) 
+[![PyTest](https://github.com/HackerSpace-PESU/pesu-auth/actions/workflows/pytest.yml/badge.svg)](https://github.com/HackerSpace-PESU/pesu-auth/actions/workflows/pytest.yml)
+[![Python Version Compatibility](https://github.com/HackerSpace-PESU/pesu-auth/actions/workflows/flake8.yml/badge.svg)](https://github.com/HackerSpace-PESU/pesu-auth/actions/workflows/flake8.yml)
+
+
 A simple API to authenticate PESU credentials using PESU Academy
 
 The API is secure and protects user privacy by not storing any user credentials. It only validates credentials and
