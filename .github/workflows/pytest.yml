@@ -45,4 +45,11 @@ jobs:
     - name: Run tests with pytest
       run: |
         echo "Running tests..."
-        pytest --cov=app --cov-report=term-missing --cov-fail-under=80 --disable-warnings -v
+        if [[ -z "${{ secrets.TEST_PRN }}" || -z "${{ secrets.TEST_PASSWORD }}" ]]; then
+          echo "Secrets missing. Running only tests not requiring secrets..."
+          pytest -m "not secret_required" --disable-warnings -v 
+        else
+          echo "Running all tests..."
+          pytest --cov=app --cov-report=term-missing --cov-fail-under=80 --disable-warnings -v
+        fi
+
