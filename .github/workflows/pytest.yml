@@ -1,4 +1,4 @@
-name: PyTest
+name: Pre-Commit Checks
 
 on: [ push, pull_request ]
 
