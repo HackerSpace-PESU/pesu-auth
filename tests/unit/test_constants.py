@@ -16,6 +16,7 @@ def test_default_fields_is_list():
     assert "campus_code" in PESUAcademyConstants.DEFAULT_FIELDS
     assert "campus" in PESUAcademyConstants.DEFAULT_FIELDS
 
+
 def test_branch_short_code_map_contains_all_branches():
     expected_map = {
         "Computer Science and Engineering": "CSE",
@@ -42,12 +43,6 @@ def test_branch_short_code_map_contains_all_branches():
     unexpected_branches = set(PESUAcademyConstants.BRANCH_SHORT_CODES) - set(
         expected_map
     )
-<<<<<<< HEAD
-    assert (
-        not unexpected_branches
-    ), f"Unexpected branches found in constants: {unexpected_branches}. Please update the test or constants."
-=======
     assert not unexpected_branches, (
         f"Unexpected branches found in constants: {unexpected_branches}. Please update the test or constants."
     )
->>>>>>> fef57a2642897af847d4ffd2084ac4a15a5314d8

@@ -126,6 +126,7 @@ def test_authenticate_with_all_profile_fields(pesu_academy: PESUAcademy):
     assert profile["campus_code"] == campus_code
     assert profile["campus"] == campus
 
+
 def test_authenticate_invalid_credentials(pesu_academy: PESUAcademy):
     result = pesu_academy.authenticate(
         "INVALID_USER", "wrongpass", profile=True, fields=None

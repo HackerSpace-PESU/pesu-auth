@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-from typing import List, Dict
-
-=======
->>>>>>> fef57a2642897af847d4ffd2084ac4a15a5314d8
 class PESUAcademyConstants:
     DEFAULT_FIELDS: list[str] = [
         "name",
