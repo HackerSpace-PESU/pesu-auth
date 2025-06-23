@@ -40,3 +40,6 @@ pythonpath = ["."]
 filterwarnings = [
     "ignore:The 'strip_cdata' option of HTMLParser.*:DeprecationWarning"
 ]
+markers = [
+    "secret_required: marks tests that require secrets to run"
+]
