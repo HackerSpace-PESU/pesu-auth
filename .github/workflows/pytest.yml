@@ -9,7 +9,7 @@ jobs:
     strategy:
       max-parallel: 5
       matrix:
-        python-version: [ "3.9", "3.10", "3.11", "3.12" ]
+        python-version: [ "3.10", "3.11", "3.12" ]
 
     env:
       TEST_NAME: ${{ secrets.TEST_NAME }}
@@ -31,25 +31,25 @@ jobs:
       # TEST_INSTITUTE_NAME: ${{ secrets.TEST_INSTITUTE_NAME }}
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python-version }}
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
 
-    - name: Install dependencies
-      run: |
-        pip install -r requirements.txt
-        pip install pytest pytest-cov httpx
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest pytest-cov httpx
 
-    - name: Run tests with pytest
-      run: |
-        echo "Running tests..."
-        if [[ -z "${{ secrets.TEST_PRN }}" || -z "${{ secrets.TEST_PASSWORD }}" ]]; then
-          echo "Secrets missing. Running only tests not requiring secrets..."
-          pytest -m "not secret_required" --disable-warnings -v
-        else
-          echo "Running all tests..."
-          pytest --cov=app --cov-report=term-missing --cov-fail-under=80 --disable-warnings -v
-        fi
+      - name: Run tests with pytest
+        run: |
+          echo "Running tests..."
+          if [[ -z "${{ secrets.TEST_PRN }}" || -z "${{ secrets.TEST_PASSWORD }}" ]]; then
+            echo "Secrets missing. Running only tests not requiring secrets..."
+            pytest -m "not secret_required" --disable-warnings -v
+          else
+            echo "Running all tests..."
+            pytest --cov=app --cov-report=term-missing --cov-fail-under=80 --disable-warnings -v
+          fi
