@@ -14,7 +14,6 @@ dependencies = [
     "flask>=3.1.1",
     "gh-md-to-html>=1.21.3",
     "lxml-html-clean>=0.4.2",
-    "pre-commit>=4.2.0",
     "pytz>=2025.2",
     "requests>=2.32.4",
     "requests-html>=0.10.0",
@@ -22,6 +21,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
+    "pre-commit>=4.2.0",
     "httpx>=0.28.1",
     "pytest>=8.4.1",
     "pytest-cov>=6.2.1",
