@@ -33,7 +33,6 @@ def convert_readme_to_html():
         f.write(html)
     logging.info("README.md converted to HTML successfully.")
 
-
 def validate_input(
     username: str,
     password: str,
@@ -147,10 +146,6 @@ def authenticate():
                   - phone
                   - campus_code
                   - campus
-                  - class
-                  - cycle
-                  - department
-                  - institute_name
               example: ["name", "prn", "branch", "branch_short_code", "campus"]
     responses:
       200:
@@ -281,7 +276,6 @@ def authenticate():
             500,
             {"Content-Type": "application/json"},
         )
-
 
 if __name__ == "__main__":
     # Set up argument parser for command line arguments
