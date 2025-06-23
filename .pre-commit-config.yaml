@@ -35,7 +35,7 @@ repos:
     hooks:
       - id: pytest
         name: Run Pytest
-        entry: pytest --cov=app --cov-report=term-missing --cov-fail-under=80 --disable-warnings -v
+        entry: sh -c 'if [ -z "$TEST_PRN" ] || [ -z "$TEST_PASSWORD" ]; then echo "Secrets missing. Running non-secret tests..."; pytest -m "not secret_required" --disable-warnings -v; else echo "Running all tests..."; pytest --cov=app --cov-report=term-missing --cov-fail-under=80 --disable-warnings -v; fi'
         language: system
         types: [ python ]
         pass_filenames: false

@@ -11,6 +11,21 @@ jobs:
       matrix:
         python-version: [ "3.10", "3.11", "3.12" ]
 
+    env:
+      TEST_NAME: ${{ secrets.TEST_NAME }}
+      TEST_PRN: ${{ secrets.TEST_PRN }}
+      TEST_SRN: ${{ secrets.TEST_SRN }}
+      TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+      TEST_BRANCH: ${{ secrets.TEST_BRANCH }}
+      TEST_BRANCH_SHORT_CODE: ${{ secrets.TEST_BRANCH_SHORT_CODE }}
+      TEST_PROGRAM: ${{ secrets.TEST_PROGRAM }}
+      TEST_SEMESTER: ${{ secrets.TEST_SEMESTER }}
+      TEST_SECTION: ${{ secrets.TEST_SECTION }}
+      TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
+      TEST_PHONE: ${{ secrets.TEST_PHONE }}
+      TEST_CAMPUS: ${{ secrets.TEST_CAMPUS }}
+      TEST_CAMPUS_CODE: ${{ secrets.TEST_CAMPUS_CODE }}
+
     steps:
       - uses: actions/checkout@v3
 

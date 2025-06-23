@@ -25,10 +25,6 @@ jobs:
       TEST_PHONE: ${{ secrets.TEST_PHONE }}
       TEST_CAMPUS: ${{ secrets.TEST_CAMPUS }}
       TEST_CAMPUS_CODE: ${{ secrets.TEST_CAMPUS_CODE }}
-      # TEST_CLASS: ${{ secrets.TEST_CLASS }}
-      # TEST_CYCLE: ${{ secrets.TEST_CYCLE }}
-      # TEST_DEPARTMENT: ${{ secrets.TEST_DEPARTMENT }}
-      # TEST_INSTITUTE_NAME: ${{ secrets.TEST_INSTITUTE_NAME }}
 
     steps:
       - uses: actions/checkout@v3
