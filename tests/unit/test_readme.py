@@ -1,7 +1,7 @@
-import pytest
+from unittest.mock import mock_open, patch
+
+
 import app.app as app_module
-import builtins
-from unittest.mock import patch, mock_open
 
 
 def test_convert_readme_to_html_writes_html():

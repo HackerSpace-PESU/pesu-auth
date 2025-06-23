@@ -1,5 +1,7 @@
 import os
+
 import pytest
+
 from app.pesu import PESUAcademy
 
 
@@ -31,9 +33,9 @@ def test_authenticate_with_specific_profile_fields(pesu_academy: PESUAcademy):
     assert username is not None, "TEST_PRN environment variable not set"
     assert password is not None, "TEST_PASSWORD environment variable not set"
     assert branch is not None, "TEST_BRANCH environment variable not set"
-    assert (
-        branch_short_code is not None
-    ), "TEST_BRANCH_SHORT_CODE environment variable not set"
+    assert branch_short_code is not None, (
+        "TEST_BRANCH_SHORT_CODE environment variable not set"
+    )
     assert campus is not None, "TEST_CAMPUS environment variable not set"
 
     fields = ["prn", "branch", "branch_short_code", "campus"]
@@ -78,9 +80,9 @@ def test_authenticate_with_all_profile_fields(pesu_academy: PESUAcademy):
     assert username is not None, "TEST_PRN environment variable not set"
     assert password is not None, "TEST_PASSWORD environment variable not set"
     assert branch is not None, "TEST_BRANCH environment variable not set"
-    assert (
-        branch_short_code is not None
-    ), "TEST_BRANCH_SHORT_CODE environment variable not set"
+    assert branch_short_code is not None, (
+        "TEST_BRANCH_SHORT_CODE environment variable not set"
+    )
     assert campus is not None, "TEST_CAMPUS environment variable not set"
     assert srn is not None, "TEST_SRN environment variable not set"
     assert program is not None, "TEST_PROGRAM environment variable not set"

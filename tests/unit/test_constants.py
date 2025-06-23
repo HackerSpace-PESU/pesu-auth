@@ -37,16 +37,16 @@ def test_branch_short_code_map_contains_all_branches():
     }
 
     for branch, code in expected_map.items():
-        assert (
-            branch in PESUAcademyConstants.BRANCH_SHORT_CODES
-        ), f"Branch '{branch}' missing from constants."
-        assert (
-            PESUAcademyConstants.BRANCH_SHORT_CODES[branch] == code
-        ), f"Branch '{branch}' short code mismatch."
+        assert branch in PESUAcademyConstants.BRANCH_SHORT_CODES, (
+            f"Branch '{branch}' missing from constants."
+        )
+        assert PESUAcademyConstants.BRANCH_SHORT_CODES[branch] == code, (
+            f"Branch '{branch}' short code mismatch."
+        )
 
     unexpected_branches = set(PESUAcademyConstants.BRANCH_SHORT_CODES) - set(
         expected_map
     )
-    assert (
-        not unexpected_branches
-    ), f"Unexpected branches found in constants: {unexpected_branches}. Please update the test or constants."
+    assert not unexpected_branches, (
+        f"Unexpected branches found in constants: {unexpected_branches}. Please update the test or constants."
+    )

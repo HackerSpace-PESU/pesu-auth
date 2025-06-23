@@ -1,6 +1,6 @@
 # pesu-auth
 
-[![Docker Image Build](https://github.com/HackerSpace-PESU/pesu-auth/actions/workflows/docker.yml/badge.svg)](https://github.com/HackerSpace-PESU/pesu-auth/actions/workflows/docker.yml) 
+[![Docker Image Build](https://github.com/HackerSpace-PESU/pesu-auth/actions/workflows/docker.yml/badge.svg)](https://github.com/HackerSpace-PESU/pesu-auth/actions/workflows/docker.yml)
 [![PyTest](https://github.com/HackerSpace-PESU/pesu-auth/actions/workflows/pytest.yml/badge.svg)](https://github.com/HackerSpace-PESU/pesu-auth/actions/workflows/pytest.yml)
 [![Python Version Compatibility](https://github.com/HackerSpace-PESU/pesu-auth/actions/workflows/flake8.yml/badge.svg)](https://github.com/HackerSpace-PESU/pesu-auth/actions/workflows/flake8.yml)
 
@@ -120,9 +120,9 @@ Here are some examples of how you can integrate your application with the PESUAu
 import requests
 
 data = {
-    'username': 'your SRN or PRN here',
-    'password': 'your password here',
-    'profile': True,  # Optional, defaults to False
+    "username": "your SRN or PRN here",
+    "password": "your password here",
+    "profile": True,  # Optional, defaults to False
 }
 
 response = requests.post("http://localhost:5000/authenticate", json=data)

@@ -12,3 +12,4 @@ pyrightconfig.json
 *.bru
 bruno.json
 .coverage
+.env

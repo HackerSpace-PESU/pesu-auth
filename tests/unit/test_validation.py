@@ -1,6 +1,6 @@
 import pytest
+
 from app.app import validate_input
-from app.constants import PESUAcademyConstants
 
 
 def test_valid_input():
