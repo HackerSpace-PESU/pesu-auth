@@ -37,7 +37,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          pip install pytest pytest-cov httpx
+          pip install pytest pytest-cov httpx python-dotenv
 
       - name: Run tests with pytest
         run: |
