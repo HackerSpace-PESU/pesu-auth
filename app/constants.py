@@ -1,8 +1,5 @@
-from typing import List, Dict
-
-
 class PESUAcademyConstants:
-    DEFAULT_FIELDS: List[str] = [
+    DEFAULT_FIELDS: list[str] = [
         "name",
         "prn",
         "srn",
@@ -21,7 +18,7 @@ class PESUAcademyConstants:
         "institute_name",  # TODO: These fields seem to have been deprecated in the latest version
     ]
 
-    BRANCH_SHORT_CODES: Dict[str, str] = {
+    BRANCH_SHORT_CODES: dict[str, str] = {
         "Computer Science and Engineering": "CSE",
         "Computer Science and Engineering (AI&ML)": "CSE (AI&ML)",
         "Electronics and Communication Engineering": "ECE",

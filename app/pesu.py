@@ -61,8 +61,8 @@ class PESUAcademy:
             # Parse the response text
             soup = BeautifulSoup(response.text, "lxml")
 
-        except Exception as e:
-            logging.exception(f"Unable to fetch profile data.")
+        except Exception:
+            logging.exception("Unable to fetch profile data.")
             return {"error": f"Unable to fetch profile data: {traceback.format_exc()}"}
 
         profile = dict()
@@ -146,7 +146,7 @@ class PESUAcademy:
             logging.debug(f"CSRF token fetched: {csrf_token}")
         except Exception as e:
             # Log the error and return the error message
-            logging.exception(f"Unable to fetch csrf token.")
+            logging.exception("Unable to fetch csrf token.")
             session.close()
             return {
                 "status": False,
@@ -170,7 +170,7 @@ class PESUAcademy:
             logging.debug("Authentication response received.")
         except Exception as e:
             # Log the error and return the error message
-            logging.exception(f"Unable to authenticate.")
+            logging.exception("Unable to authenticate.")
             session.close()
             return {
                 "status": False,
@@ -200,7 +200,7 @@ class PESUAcademy:
             logging.info("Profile data requested, fetching profile information...")
             # Fetch the profile information
             result["profile"] = self.get_profile_information(session, username)
-            logging.info(f"Profile information fetched successfully.")
+            logging.info("Profile information fetched successfully.")
             # Filter the fields if field filtering is enabled
             if field_filtering:
                 logging.info(

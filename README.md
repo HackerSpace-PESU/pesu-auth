@@ -1,9 +1,8 @@
 # pesu-auth
 
-[![Docker Image Build](https://github.com/HackerSpace-PESU/pesu-auth/actions/workflows/docker.yml/badge.svg)](https://github.com/HackerSpace-PESU/pesu-auth/actions/workflows/docker.yml) 
+[![Docker Image Build](https://github.com/HackerSpace-PESU/pesu-auth/actions/workflows/docker.yml/badge.svg)](https://github.com/HackerSpace-PESU/pesu-auth/actions/workflows/docker.yml)
 [![PyTest](https://github.com/HackerSpace-PESU/pesu-auth/actions/workflows/pytest.yml/badge.svg)](https://github.com/HackerSpace-PESU/pesu-auth/actions/workflows/pytest.yml)
 [![Python Version Compatibility](https://github.com/HackerSpace-PESU/pesu-auth/actions/workflows/flake8.yml/badge.svg)](https://github.com/HackerSpace-PESU/pesu-auth/actions/workflows/flake8.yml)
-
 
 A simple API to authenticate PESU credentials using PESU Academy
 
@@ -29,37 +28,83 @@ following commands to start the API.
 
 1. Build the Docker image
 
-  ```bash
-  docker build . --tag pesu-auth
-  ```
+```bash
+docker build . --tag pesu-auth
+```
 
 2. Run the Docker container
 
-  ```bash
-  docker run --name pesu-auth -d -p 5000:5000 pesu-auth
-  ```
+```bash
+docker run --name pesu-auth -d -p 5000:5000 pesu-auth
+```
 
 3. Access the API at `http://localhost:5000/`
 
 ### Running without Docker
 
-If you don't have Docker installed, you can run the API using Python. Ensure you have Python 3.8 or higher installed on
-your system.
+If you don't have Docker installed, you can run the API using Python. Ensure you have Python 3.10 or higher installed
+on your system.
 
-1. Create a virtual environment using `conda` or any other virtual environment manager of your choice and activate it.
-   Then, install the dependencies using the following command.
+1. Create a virtual environment using `conda`, `uv` or any other virtual environment manager of your choice and activate
+   it. Then, install the dependencies using the following command.
 
-  ```bash
-  pip install -r requirements.txt
-  ```
+#### For `conda` users:
+
+```bash
+pip install -r requirements.txt
+```
+
+#### For `uv` users:
+
+```bash
+uv sync
+```
 
 2. Run the API using the following command.
 
-  ```bash
-  python app/app.py
-  ```
+#### For `conda` users:
+
+```bash
+python -m app.app
+```
+
+#### For `uv` users:
+
+```bash
+uv run python -m app.app
+```
 
 3. Access the API at `http://localhost:5000/`
+
+### Setting up a Development Environment
+
+If you want to contribute to the project, please follow these steps to set up your development environment:
+
+1. Create a virtual environment using `conda`, `uv` or any other virtual environment manager of your choice and activate
+   it. Then, install both the server and development dependencies using the following commands.
+
+#### For `conda` users:
+
+  ```bash
+  pip install -r requirements.txt
+  pip install pytest pytest-cov httpx python-dotenv pre-commit
+  ```
+
+#### For `uv` users:
+
+   ```bash
+   uv sync --all-extras
+   ```
+
+2. Set up pre-commit hooks to ensure code quality and consistency. Run the following command and then test the hooks
+   using the following command.
+
+```bash
+pre-commit install
+pre-commit run --all-files
+```
+
+3. Run the API using the same commands as mentioned in the previous section.
 
 # How to use pesu-auth
 
@@ -88,25 +133,23 @@ profile data was requested, the response's `profile` key will store a dictionary
 | `profile`   | `ProfileObject` | A nested map storing the profile information, returned only if requested |
 | `message`   | `str`           | A message that provides information corresponding to the status          |
 | `timestamp` | `datetime`      | A timezone offset timestamp indicating the time of authentication        |
-| `error`     | `str`           | The error name and stack trace, if an application side error occurs      |
+| `error`     | `str`           | The error name and stack trace, if an application side error occurs      |#### Profile Ob    ject
 
-#### Profile Object
-
-| **Field**           | **Description**                                        |
-|---------------------|--------------------------------------------------------|
-| `name`              | Name of the user                                       |
-| `prn`               | PRN of the user                                        |
-| `srn`               | SRN of the user                                        |
-| `program`           | Academic program that the user is enrolled into        |
-| `branch_short_code` | Abbreviation of the branch that the user is pursuing   |
-| `branch`            | Complete name of the branch that the user is pursuing  |
-| `semester`          | Current semester that the user is in                   |
-| `section`           | Section of the user                                    |
-| `email`             | Email address of the user registered with PESU         |
-| `phone`             | Phone number of the user registered with PESU          |
+| **Field**           | **Description**               ----------------------- |
+|---------------------|------------------------------- --------------------- ----|
+| `name`              | Name of the user |
+| `prn`               | PRN of the user |
+| `srn`               | SRN of the user |
+| `program`           | Academic program that the user is enrolled into |
+| `branch_short_code` | Abbreviation of the branch tha t the user is pursuin g |
+| `branch`            | Complete name of the branch th at the user is pursui ng |
+| `semester`          | Current semester that the user is in |
+| `section`           | Section of the user |
+| `email`             | Email address of the user regi stered with PESU |
+| `phone`             | Phone number of the user regis tered with PESU |
 | `campus_code`       | The integer code of the campus (1 for RR and 2 for EC) |
-| `campus`            | Abbreviation of the user's campus name                 |
-| `error`             | The error name and stack trace, if an error occurs     |
+| `campus`            | Abbreviation of the user's cam pus name |
+| `error`             | The error name and stack trace, if an error occurs |
 
 ## Integrating your application with pesu-auth
 
@@ -120,9 +163,9 @@ Here are some examples of how you can integrate your application with the PESUAu
 import requests
 
 data = {
-    'username': 'your SRN or PRN here',
-    'password': 'your password here',
-    'profile': True,  # Optional, defaults to False
+    "username": "your SRN or PRN here",
+    "password": "your password here",
+    "profile": True,  # Optional, defaults to False
 }
 
 response = requests.post("http://localhost:5000/authenticate", json=data)

@@ -1,15 +1,14 @@
+import argparse
 import datetime
 import json
 import logging
 import os
 import re
-import traceback
 
 import gh_md_to_html
 import pytz
 from flasgger import Swagger
 from flask import Flask, request
-import argparse
 
 from app.constants import PESUAcademyConstants
 from app.pesu import PESUAcademy
@@ -55,14 +54,16 @@ def validate_input(
     assert password is not None, "Password not provided."
     assert isinstance(password, str), "Password should be a string."
     assert isinstance(profile, bool), "Profile should be a boolean."
-    assert fields is None or (
-        isinstance(fields, list) and fields
-    ), "Fields should be a non-empty list or None."
+    assert fields is None or (isinstance(fields, list) and fields), (
+        "Fields should be a non-empty list or None."
+    )
     if fields is not None:
         for field in fields:
             assert (
                 isinstance(field, str) and field in PESUAcademyConstants.DEFAULT_FIELDS
-            ), f"Invalid field: '{field}'. Valid fields are: {PESUAcademyConstants.DEFAULT_FIELDS}."
+            ), (
+                f"Invalid field: '{field}'. Valid fields are: {PESUAcademyConstants.DEFAULT_FIELDS}."
+            )
     logging.info("Input validation successful. All parameters are valid.")
 
 
@@ -89,9 +90,8 @@ def readme():
         with open("README.html") as f:
             output = f.read()
             return output, 200, {"Content-Type": "text/html"}
-    except Exception as e:
-        stacktrace = traceback.format_exc()
-        logging.exception(f"Error rendering home page.")
+    except Exception:
+        logging.exception("Error rendering home page.")
         return "Error occurred while retrieving home page", 500
 
 
@@ -244,11 +244,10 @@ def authenticate():
 
     # Validate the input provided by the user
     try:
-        logging.info(f"Received authentication request. Validating input...")
+        logging.info("Received authentication request. Validating input...")
         validate_input(username, password, profile, fields)
     except Exception as e:
-        stacktrace = traceback.format_exc()
-        logging.exception(f"Could not validate request data.")
+        logging.exception("Could not validate request data.")
         return (
             json.dumps(
                 {
@@ -274,8 +273,7 @@ def authenticate():
             {"Content-Type": "application/json"},
         )
     except Exception as e:
-        stacktrace = traceback.format_exc()
-        logging.exception(f"Error authenticating user.")
+        logging.exception("Error authenticating user.")
         return (
             json.dumps({"status": False, "message": f"Error authenticating user: {e}"}),
             500,

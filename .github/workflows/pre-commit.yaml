@@ -1,9 +1,9 @@
-name: Pre-Commit Checks
+name: PyTest
 
 on: [ push, pull_request ]
 
 jobs:
-  test:
+  pre-commit:
     runs-on: ubuntu-latest
 
     strategy:
@@ -36,16 +36,9 @@ jobs:
 
       - name: Install dependencies
         run: |
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pytest pytest-cov httpx python-dotenv
+          pip install pre-commit pytest pytest-cov httpx python-dotenv
 
-      - name: Run tests with pytest
-        run: |
-          echo "Running tests..."
-          if [[ -z "${{ secrets.TEST_PRN }}" || -z "${{ secrets.TEST_PASSWORD }}" ]]; then
-            echo "Secrets missing. Running only tests not requiring secrets..."
-            pytest -m "not secret_required" --disable-warnings -v
-          else
-            echo "Running all tests..."
-            pytest --cov=app --cov-report=term-missing --cov-fail-under=80 --disable-warnings -v
-          fi
+      - name: Run pre-commit hooks
+        run: pre-commit run --all-files
