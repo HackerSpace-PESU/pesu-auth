@@ -13,3 +13,6 @@ pyrightconfig.json
 bruno.json
 .coverage
 .env
+.uv/
+.ruff_cache/
+uv.lock
