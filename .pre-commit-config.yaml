@@ -1,0 +1,41 @@
+repos:
+  - repo: https://github.com/asottile/blacken-docs
+    rev: 1.19.1
+    hooks:
+      - id: blacken-docs
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.12.0
+    hooks:
+      - id: ruff
+        args: [ --fix, --exit-non-zero-on-fix ]
+        types_or: [ python, pyi, jupyter ]
+      - id: ruff-format
+
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.20.0
+    hooks:
+      - id: pyupgrade
+        args: [ "--py39-plus" ]
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: requirements-txt-fixer
+      - id: trailing-whitespace
+      - id: check-added-large-files
+      - id: check-yaml
+      - id: check-toml
+      - id: debug-statements
+      - id: name-tests-test
+        args: [ '--pytest-test-first' ]
+
+  - repo: local
+    hooks:
+      - id: pytest
+        name: Run Pytest
+        entry: bash -c 'if [[ -f .env ]]; then set -a && source .env && set +a; fi; if [[ -z "$TEST_PRN" || -z "$TEST_PASSWORD" ]]; then echo "Secrets missing. Running only tests not requiring secrets..." && pytest -m "not secret_required" --disable-warnings -v -s; else echo "Running all tests..." && pytest --cov=app --cov-report=term-missing --cov-fail-under=80 --disable-warnings -v -s; fi'
+        language: system
+        types: [ python ]
+        pass_filenames: false
