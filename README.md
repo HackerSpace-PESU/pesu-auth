@@ -17,6 +17,21 @@ returns the user's profile information. No personal data is stored or logged.
 > :warning: **Warning:** The live version is hosted on a free tier server, so you might experience some latency on the
 > first request since the server might not be awake. Subsequent requests will be faster.
 
+
+## Setting up Environment Variables
+
+Before running the application, copy the `.env.example` file to `.env` and fill in the required values:
+
+```bash
+cp .env.example .env
+```
+
+Edit the `.env` file and replace all `<YOUR_..._HERE>` placeholders with your actual test user details.
+
+**Do not commit your `.env` file to GitHub**
+
+*Each variable is documented in the `.env.example` file for clarity.*
+
 ## How to run pesu-auth locally
 
 Running the PESUAuth API locally is simple. Clone the repository and follow the steps below to get started.
@@ -134,6 +149,13 @@ profile data was requested, the response's `profile` key will store a dictionary
 | `message`   | `str`           | A message that provides information corresponding to the status          |
 | `timestamp` | `datetime`      | A timezone offset timestamp indicating the time of authentication        |
 | `error`     | `str`           | The error name and stack trace, if an application side error occurs      |#### Profile Ob    ject
+
+
+#### `ProfileObject`
+
+This object contains the user's profile information, which is returned only if the `profile` parameter is set to
+
+`True`. If the authentication fails, this field will not be present in the response.
 
 | **Field**           | **Description**               ----------------------- |
 |---------------------|------------------------------- --------------------- ----|
