@@ -52,3 +52,6 @@ websockets==10.4
 Werkzeug==3.1.3
 wheel==0.45.1
 zipp==3.23.0
+python-dotenv==1.0.0
+pytest==8.0.0
+pytest-cov==4.0.0
