@@ -26,4 +26,5 @@ class PESUAcademyConstants:
         "BA LLB": "BA LLB",
         "Psychology": "Psychology",
         "Bachelor of Business Administration": "BBA",
+        "BBA LLB": "BBA LLB",
     }

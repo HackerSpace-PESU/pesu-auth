@@ -30,6 +30,7 @@ def test_branch_short_code_map_contains_all_branches():
         "BA LLB": "BA LLB",
         "Psychology": "Psychology",
         "Bachelor of Business Administration": "BBA",
+        "BBA LLB": "BBA LLB",
     }
 
     for branch, code in expected_map.items():

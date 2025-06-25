@@ -59,8 +59,22 @@ pip install -r requirements.txt
 ```bash
 uv sync
 ```
+2. Below are the steps to setup environment variables -
 
-2. Run the API using the following command.
+Before running the application, copy the `.env.example` file to `.env` and fill in the required values:
+
+```bash
+cp .env.example .env
+```
+
+Edit the `.env` file and replace all `<YOUR_..._HERE>` placeholders with your actual test user details.
+
+**Do not commit your `.env` file to GitHub**
+
+*Each variable is documented in the `.env.example` file for clarity.*
+
+
+3. Run the API using the following command.
 
 #### For `conda` users:
 
@@ -74,24 +88,9 @@ python -m app.app
 uv run python -m app.app
 ```
 
-3. Access the API at `http://localhost:5000/`
+4. Access the API at `http://localhost:5000/`
 
 ### Setting up a Development Environment
-
-
-## Setting up Environment Variables
-
-Before running the application, copy the `.env.example` file to `.env` and fill in the required values:
-
-```bash
-cp .env.example .env
-```
-
-Edit the `.env` file and replace all `<YOUR_..._HERE>` placeholders with your actual test user details.
-
-**Do not commit your `.env` file to GitHub**
-
-*Each variable is documented in the `.env.example` file for clarity.*
 
 
 If you want to contribute to the project, please follow these steps to set up your development environment:
@@ -112,7 +111,22 @@ If you want to contribute to the project, please follow these steps to set up yo
    uv sync --all-extras
    ```
 
-2. Set up pre-commit hooks to ensure code quality and consistency. Run the following command and then test the hooks
+2. These are the steps to setup environment variables
+
+Before running the application, copy the `.env.example` file to `.env` and fill in the required values:
+
+```bash
+cp .env.example .env
+```
+
+Edit the `.env` file and replace all `<YOUR_..._HERE>` placeholders with your actual test user details.
+
+**Do not commit your `.env` file to GitHub**
+
+*Each variable is documented in the `.env.example` file for clarity.*
+
+
+3. Set up pre-commit hooks to ensure code quality and consistency. Run the following command and then test the hooks
    using the following command.
 
 ```bash
@@ -120,7 +134,7 @@ pre-commit install
 pre-commit run --all-files
 ```
 
-3. Run the API using the same commands as mentioned in the previous section.
+4. Run the API using the same commands as mentioned in the previous section.
 
 # How to use pesu-auth
 
