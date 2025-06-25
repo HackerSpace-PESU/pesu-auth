@@ -2,22 +2,37 @@
 
 import subprocess
 import sys
+import os
 from dotenv import load_dotenv
 
 
 def run_tests():
     load_dotenv()
 
-    print("Running all tests with coverage...")
-    command = [
-        "pytest",
-        "--cov=app",
-        "--cov-report=term-missing",
-        "--cov-fail-under=80",
-        "--disable-warnings",
-        "-v",
-        "-s",
-    ]
+    test_prn = os.getenv("TEST_PRN")
+    test_password = os.getenv("TEST_PASSWORD")
+
+    if not test_prn or not test_password:
+        print("Secrets missing. Running only tests not requiring secrets...")
+        command = [
+            "pytest",
+            "-m",
+            "not secret_required",
+            "--disable-warnings",
+            "-v",
+            "-s",
+        ]
+    else:
+        print("Running all tests with coverage...")
+        command = [
+            "pytest",
+            "--cov=app",
+            "--cov-report=term-missing",
+            "--cov-fail-under=80",
+            "--disable-warnings",
+            "-v",
+            "-s",
+        ]
 
     try:
         result = subprocess.run(command, check=False)
