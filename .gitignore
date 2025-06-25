@@ -16,4 +16,3 @@ bruno.json
 .uv/
 .ruff_cache/
 uv.lock
-/venv
