@@ -39,10 +39,10 @@ def run_tests():
         result = subprocess.run(command, check=False)
         return result.returncode
     except FileNotFoundError:
-        logging.error("Error: pytest not found. Please ensure pytest is installed.")
+        logging.exception("Error: pytest not found. Please ensure pytest is installed.")
         return 1
-    except Exception as e:
-        logging.error(f"Error running tests: {e}")
+    except Exception:
+        logging.exception("Error running tests")
         return 1
 
 
