@@ -3,6 +3,7 @@
 import subprocess
 import sys
 import os
+import logging
 from dotenv import load_dotenv
 
 
@@ -13,7 +14,7 @@ def run_tests():
     test_password = os.getenv("TEST_PASSWORD")
 
     if not test_prn or not test_password:
-        print("Secrets missing. Running only tests not requiring secrets...")
+        logging.info("Secrets missing. Running only tests not requiring secrets...")
         command = [
             "pytest",
             "-m",
@@ -23,7 +24,7 @@ def run_tests():
             "-s",
         ]
     else:
-        print("Running all tests with coverage...")
+        logging.info("Running all tests with coverage...")
         command = [
             "pytest",
             "--cov=app",
@@ -38,10 +39,10 @@ def run_tests():
         result = subprocess.run(command, check=False)
         return result.returncode
     except FileNotFoundError:
-        print("Error: pytest not found. Please ensure pytest is installed.")
+        logging.error("Error: pytest not found. Please ensure pytest is installed.")
         return 1
     except Exception as e:
-        print(f"Error running tests: {e}")
+        logging.error(f"Error running tests: {e}")
         return 1
 
 
