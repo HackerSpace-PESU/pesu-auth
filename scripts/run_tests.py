@@ -9,7 +9,7 @@ from pathlib import Path
 def load_env_file():
     try:
         from dotenv import load_dotenv
-        
+
         env_file = Path(".env")
         if env_file.exists():
             print(f"Loading environment variables from {env_file}")
@@ -26,7 +26,7 @@ def load_env_file():
 def check_credentials():
     test_prn = os.getenv("TEST_PRN")
     test_password = os.getenv("TEST_PASSWORD")
-    
+
     return bool(test_prn and test_password)
 
 
@@ -34,7 +34,7 @@ def run_tests():
     load_env_file()
 
     has_credentials = check_credentials()
-    
+
     if has_credentials:
         print("Running all tests with coverage...")
         command = [
@@ -44,16 +44,17 @@ def run_tests():
             "--cov-fail-under=80",
             "--disable-warnings",
             "-v",
-            "-s"
+            "-s",
         ]
     else:
         print("Secrets missing. Running only tests not requiring secrets...")
         command = [
             "pytest",
-            "-m", "not secret_required",
+            "-m",
+            "not secret_required",
             "--disable-warnings",
             "-v",
-            "-s"
+            "-s",
         ]
     try:
         result = subprocess.run(command, check=False)
@@ -68,4 +69,4 @@ def run_tests():
 
 if __name__ == "__main__":
     exit_code = run_tests()
-    sys.exit(exit_code) 
+    sys.exit(exit_code)
