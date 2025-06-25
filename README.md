@@ -17,21 +17,6 @@ returns the user's profile information. No personal data is stored or logged.
 > :warning: **Warning:** The live version is hosted on a free tier server, so you might experience some latency on the
 > first request since the server might not be awake. Subsequent requests will be faster.
 
-
-## Setting up Environment Variables
-
-Before running the application, copy the `.env.example` file to `.env` and fill in the required values:
-
-```bash
-cp .env.example .env
-```
-
-Edit the `.env` file and replace all `<YOUR_..._HERE>` placeholders with your actual test user details.
-
-**Do not commit your `.env` file to GitHub**
-
-*Each variable is documented in the `.env.example` file for clarity.*
-
 ## How to run pesu-auth locally
 
 Running the PESUAuth API locally is simple. Clone the repository and follow the steps below to get started.
@@ -92,6 +77,22 @@ uv run python -m app.app
 3. Access the API at `http://localhost:5000/`
 
 ### Setting up a Development Environment
+
+
+## Setting up Environment Variables
+
+Before running the application, copy the `.env.example` file to `.env` and fill in the required values:
+
+```bash
+cp .env.example .env
+```
+
+Edit the `.env` file and replace all `<YOUR_..._HERE>` placeholders with your actual test user details.
+
+**Do not commit your `.env` file to GitHub**
+
+*Each variable is documented in the `.env.example` file for clarity.*
+
 
 If you want to contribute to the project, please follow these steps to set up your development environment:
 
