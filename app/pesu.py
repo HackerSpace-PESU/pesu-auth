@@ -4,7 +4,7 @@ import traceback
 from datetime import datetime
 from typing import Any, Optional
 
-import requests_html
+import requests
 from bs4 import BeautifulSoup
 
 from app.constants import PESUAcademyConstants
@@ -28,7 +28,7 @@ class PESUAcademy:
         return PESUAcademyConstants.BRANCH_SHORT_CODES.get(branch)
 
     def get_profile_information(
-        self, session: requests_html.HTMLSession, username: Optional[str] = None
+        self, session: requests.Session, username: Optional[str] = None
     ) -> dict[str, Any]:
         """
         Get the profile information of the user.
@@ -126,7 +126,7 @@ class PESUAcademy:
         :return: The authentication result
         """
         # Create a new session
-        session = requests_html.HTMLSession()
+        session = requests.Session()
         # Default fields to fetch if fields is not provided
         fields = PESUAcademyConstants.DEFAULT_FIELDS if fields is None else fields
         # check if fields is not the default fields and enable field filtering
