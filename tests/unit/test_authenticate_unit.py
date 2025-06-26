@@ -10,8 +10,8 @@ def pesu():
     return PESUAcademy()
 
 
-@patch("app.pesu.requests_html.HTMLSession.get")
-@patch("app.pesu.requests_html.HTMLSession.post")
+@patch("app.pesu.requests.Session.get")
+@patch("app.pesu.requests.Session.post")
 def test_authenticate_success_no_profile(mock_post, mock_get, pesu):
     # Mock GET home page response with csrf token meta
     mock_get_response = MagicMock()
@@ -31,8 +31,8 @@ def test_authenticate_success_no_profile(mock_post, mock_get, pesu):
     assert "profile" not in result
 
 
-@patch("app.pesu.requests_html.HTMLSession.get")
-@patch("app.pesu.requests_html.HTMLSession.post")
+@patch("app.pesu.requests.Session.get")
+@patch("app.pesu.requests.Session.post")
 @patch("app.pesu.PESUAcademy.get_profile_information")
 def test_authenticate_success_with_profile(mock_get_profile, mock_post, mock_get, pesu):
     mock_get_response = MagicMock()
@@ -59,7 +59,7 @@ def test_authenticate_success_with_profile(mock_get_profile, mock_post, mock_get
     assert "branch" not in result["profile"]
 
 
-@patch("app.pesu.requests_html.HTMLSession.get")
+@patch("app.pesu.requests.Session.get")
 def test_authenticate_csrf_fetch_failure(mock_get, pesu):
     mock_get.side_effect = Exception("CSRF fetch failed")
 
@@ -69,8 +69,8 @@ def test_authenticate_csrf_fetch_failure(mock_get, pesu):
     assert "Unable to fetch csrf token" in result["message"]
 
 
-@patch("app.pesu.requests_html.HTMLSession.get")
-@patch("app.pesu.requests_html.HTMLSession.post")
+@patch("app.pesu.requests.Session.get")
+@patch("app.pesu.requests.Session.post")
 def test_authenticate_login_failure(mock_post, mock_get, pesu):
     mock_get_response = MagicMock()
     mock_get_response.text = '<meta name="csrf-token" content="fake-csrf-token">'

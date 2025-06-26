@@ -16,7 +16,6 @@ dependencies = [
     "lxml-html-clean>=0.4.2",
     "pytz>=2025.2",
     "requests>=2.32.4",
-    "requests-html>=0.10.0",
 ]
 
 [project.optional-dependencies]
@@ -37,6 +36,6 @@ packages = ["."]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
-filterwarnings = [
-    "ignore:The 'strip_cdata' option of HTMLParser.*:DeprecationWarning"
+markers = [
+    "secret_required: marks tests that require secrets or environment variables (e.g. TEST_PRN, TEST_PASSWORD)"
 ]
