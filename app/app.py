@@ -147,10 +147,6 @@ def authenticate():
                   - phone
                   - campus_code
                   - campus
-                  - class
-                  - cycle
-                  - department
-                  - institute_name
               example: ["name", "prn", "branch", "branch_short_code", "campus"]
     responses:
       200:

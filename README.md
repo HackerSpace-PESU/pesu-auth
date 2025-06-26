@@ -74,7 +74,7 @@ python -m app.app
 uv run python -m app.app
 ```
 
-3. Access the API at `http://localhost:5000/`
+3. Access the API as previously mentioned.
 
 ### Setting up a Development Environment
 
@@ -96,7 +96,14 @@ If you want to contribute to the project, please follow these steps to set up yo
    uv sync --all-extras
    ```
 
-2. Set up pre-commit hooks to ensure code quality and consistency. Run the following command and then test the hooks
+2. Set up environment variables. Copy the `.env.example` file to `.env` and replace all `<YOUR_..._HERE>` placeholders
+   with your actual test user details. Each variable has been documented in the `.env.example` file for clarity.
+
+```bash
+cp .env.example .env
+```
+
+3. Set up pre-commit hooks to ensure code quality and consistency. Run the following command and then test the hooks
    using the following command.
 
 ```bash
@@ -104,7 +111,7 @@ pre-commit install
 pre-commit run --all-files
 ```
 
-3. Run the API using the same commands as mentioned in the previous section.
+4. Run the API using the same commands as mentioned in the previous section.
 
 # How to use pesu-auth
 
@@ -135,21 +142,26 @@ profile data was requested, the response's `profile` key will store a dictionary
 | `timestamp` | `datetime`      | A timezone offset timestamp indicating the time of authentication        |
 | `error`     | `str`           | The error name and stack trace, if an application side error occurs      |#### Profile Ob    ject
 
-| **Field**           | **Description**               ----------------------- |
-|---------------------|------------------------------- --------------------- ----|
-| `name`              | Name of the user |
-| `prn`               | PRN of the user |
-| `srn`               | SRN of the user |
-| `program`           | Academic program that the user is enrolled into |
-| `branch_short_code` | Abbreviation of the branch tha t the user is pursuin g |
-| `branch`            | Complete name of the branch th at the user is pursui ng |
-| `semester`          | Current semester that the user is in |
-| `section`           | Section of the user |
-| `email`             | Email address of the user regi stered with PESU |
-| `phone`             | Phone number of the user regis tered with PESU |
+#### `ProfileObject`
+
+This object contains the user's profile information, which is returned only if the `profile` parameter is set to `True`.
+If the authentication fails, this field will not be present in the response.
+
+| **Field**           | **Description**                                        |
+|---------------------|--------------------------------------------------------|
+| `name`              | Name of the user                                       |
+| `prn`               | PRN of the user                                        |
+| `srn`               | SRN of the user                                        |
+| `program`           | Academic program that the user is enrolled into        |
+| `branch_short_code` | Abbreviation of the branch that the user is pursuing   |
+| `branch`            | Complete name of the branch that the user is pursuing  |
+| `semester`          | Current semester that the user is in                   |
+| `section`           | Section of the user                                    |
+| `email`             | Email address of the user registered with PESU         |
+| `phone`             | Phone number of the user registered with PESU          |
 | `campus_code`       | The integer code of the campus (1 for RR and 2 for EC) |
-| `campus`            | Abbreviation of the user's cam pus name |
-| `error`             | The error name and stack trace, if an error occurs |
+| `campus`            | Abbreviation of the user's campus name                 |
+| `error`             | The error name and stack trace, if an error occurs     |
 
 ## Integrating your application with pesu-auth
 

@@ -15,10 +15,6 @@ def test_default_fields_is_list():
     assert "phone" in PESUAcademyConstants.DEFAULT_FIELDS
     assert "campus_code" in PESUAcademyConstants.DEFAULT_FIELDS
     assert "campus" in PESUAcademyConstants.DEFAULT_FIELDS
-    assert "class" in PESUAcademyConstants.DEFAULT_FIELDS
-    assert "cycle" in PESUAcademyConstants.DEFAULT_FIELDS
-    assert "department" in PESUAcademyConstants.DEFAULT_FIELDS
-    assert "institute_name" in PESUAcademyConstants.DEFAULT_FIELDS
 
 
 def test_branch_short_code_map_contains_all_branches():

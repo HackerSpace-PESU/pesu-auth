@@ -12,10 +12,6 @@ class PESUAcademyConstants:
         "phone",
         "campus_code",
         "campus",
-        "class",  # TODO: These fields seem to have been deprecated in the latest version
-        "cycle",  # TODO: These fields seem to have been deprecated in the latest version
-        "department",  # TODO: These fields seem to have been deprecated in the latest version
-        "institute_name",  # TODO: These fields seem to have been deprecated in the latest version
     ]
 
     BRANCH_SHORT_CODES: dict[str, str] = {
