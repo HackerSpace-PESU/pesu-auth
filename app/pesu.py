@@ -38,7 +38,9 @@ class PESUAcademy:
         """
         try:
             # Fetch the profile data from the student profile page
-            logging.info("Fetching profile data from the student profile page...")
+            logging.info(
+                f"Fetching profile data for user={username} from the student profile page..."
+            )
             profile_url = (
                 "https://www.pesuacademy.com/Academy/s/studentProfilePESUAdmin"
             )
@@ -99,14 +101,13 @@ class PESUAcademy:
         )
 
         # if username starts with PES1, then they are from RR campus, else if it is PES2, then EC campus
-        key = username if username else profile["pesu_id"]
-        if campus_code_match := re.match(r"PES(\d)", key):
+        if campus_code_match := re.match(r"PES(\d)", profile["prn"]):
             campus_code = campus_code_match.group(1)
             profile["campus_code"] = int(campus_code)
             profile["campus"] = "RR" if campus_code == "1" else "EC"
 
         logging.info(
-            f"Complete profile information retrieved for PRN: {profile.get('prn')}: {profile}"
+            f"Complete profile information retrieved for user={username}: {profile}"
         )
         return profile
 
@@ -133,7 +134,7 @@ class PESUAcademy:
         field_filtering = fields != PESUAcademyConstants.DEFAULT_FIELDS
 
         logging.info(
-            f"Authenticating user with username: {username}, profile: {profile}, fields: {fields}"
+            f"Connecting to PESU Academy with user={username}, profile={profile}, fields={fields} ..."
         )
         try:
             # Get the initial csrf token assigned to the user session when the home page is loaded
@@ -189,7 +190,7 @@ class PESUAcademy:
             }
 
         # If the user is successfully authenticated
-        logging.info("Login successful. Fetching profile data if requested...")
+        logging.info(f"Login successful for user={username}.")
         status = True
         # Get the newly authenticated csrf token
         csrf_token = soup.find("meta", attrs={"name": "csrf-token"})["content"]
@@ -197,25 +198,25 @@ class PESUAcademy:
         result = {"status": status, "message": "Login successful."}
 
         if profile:
-            logging.info("Profile data requested, fetching profile information...")
+            logging.info(
+                f"Profile data requested for user={username}. Fetching profile data..."
+            )
             # Fetch the profile information
             result["profile"] = self.get_profile_information(session, username)
-            logging.info("Profile information fetched successfully.")
             # Filter the fields if field filtering is enabled
             if field_filtering:
-                logging.info(
-                    f"Field filtering enabled. Filtering profile fields: {fields} from the fetched profile data."
-                )
                 result["profile"] = {
                     key: value
                     for key, value in result["profile"].items()
                     if key in fields
                 }
                 logging.info(
-                    f"Filtered profile data for PRN={result['profile'].get('prn')}: {result['profile']}"
+                    f"Field filtering enabled. Filtered profile data for user={username}: {result['profile']}"
                 )
 
-        logging.info("Authentication process completed successfully.")
+        logging.info(
+            f"Authentication process for user={username} completed successfully."
+        )
         # Close the session and return the result
         session.close()
         return result
