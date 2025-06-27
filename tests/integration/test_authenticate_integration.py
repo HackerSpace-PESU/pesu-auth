@@ -13,7 +13,24 @@ def client():
 
 
 @pytest.mark.secret_required
-def test_integration_authenticate_success(client):
+def test_integration_authenticate_success_username(client):
+    payload = {
+        "username": os.getenv("TEST_USERNAME"),
+        "password": os.getenv("TEST_PASSWORD"),
+        "profile": False,
+    }
+
+    response = client.post("/authenticate", json=payload)
+    assert response.status_code == 200
+    data = response.get_json()
+    assert data["status"] is True
+    assert "profile" not in data
+    assert "timestamp" in data
+    assert data["message"] == "Login successful."
+
+
+@pytest.mark.secret_required
+def test_integration_authenticate_success_prn_username(client):
     payload = {
         "username": os.getenv("TEST_PRN"),
         "password": os.getenv("TEST_PASSWORD"),
@@ -30,14 +47,33 @@ def test_integration_authenticate_success(client):
 
 
 @pytest.mark.secret_required
+def test_integration_authenticate_success_phone_username(client):
+    payload = {
+        "username": os.getenv("TEST_PHONE"),
+        "password": os.getenv("TEST_PASSWORD"),
+        "profile": False,
+    }
+
+    response = client.post("/authenticate", json=payload)
+    assert response.status_code == 200
+    data = response.get_json()
+    assert data["status"] is True
+    assert "profile" not in data
+    assert "timestamp" in data
+    assert data["message"] == "Login successful."
+
+
+@pytest.mark.secret_required
 def test_integration_authenticate_with_specific_profile_fields(client):
-    username = os.getenv("TEST_PRN")
+    username = os.getenv("TEST_USERNAME")
     password = os.getenv("TEST_PASSWORD")
+    prn = os.getenv("TEST_PRN")
     branch = os.getenv("TEST_BRANCH")
     branch_short_code = os.getenv("TEST_BRANCH_SHORT_CODE")
     campus = os.getenv("TEST_CAMPUS")
-    assert username is not None, "TEST_PRN environment variable not set"
+    assert username is not None, "TEST_USERNAME environment variable not set"
     assert password is not None, "TEST_PASSWORD environment variable not set"
+    assert prn is not None, "TEST_PRN environment variable not set"
     assert branch is not None, "TEST_BRANCH environment variable not set"
     assert branch_short_code is not None, (
         "TEST_BRANCH_SHORT_CODE environment variable not set"
@@ -46,8 +82,8 @@ def test_integration_authenticate_with_specific_profile_fields(client):
 
     expected_fields = ["prn", "branch", "branch_short_code", "campus"]
     payload = {
-        "username": os.getenv("TEST_PRN"),
-        "password": os.getenv("TEST_PASSWORD"),
+        "username": username,
+        "password": password,
         "profile": True,
         "fields": expected_fields,
     }
@@ -64,7 +100,7 @@ def test_integration_authenticate_with_specific_profile_fields(client):
         f"Expected {len(expected_fields)} fields in profile, got {len(profile)}"
     )
 
-    assert profile["prn"] == username
+    assert profile["prn"] == prn
     assert profile["branch"] == branch
     assert profile["branch_short_code"] == branch_short_code
     assert profile["campus"] == campus
@@ -74,8 +110,9 @@ def test_integration_authenticate_with_specific_profile_fields(client):
 @pytest.mark.secret_required
 def test_integration_authenticate_with_all_profile_fields(client):
     name = os.getenv("TEST_NAME")
-    username = os.getenv("TEST_PRN")
+    username = os.getenv("TEST_USERNAME")
     password = os.getenv("TEST_PASSWORD")
+    prn = os.getenv("TEST_PRN")
     srn = os.getenv("TEST_SRN")
     program = os.getenv("TEST_PROGRAM")
     semester = os.getenv("TEST_SEMESTER")
@@ -88,8 +125,9 @@ def test_integration_authenticate_with_all_profile_fields(client):
     campus = os.getenv("TEST_CAMPUS")
 
     assert name is not None, "TEST_NAME environment variable not set"
-    assert username is not None, "TEST_PRN environment variable not set"
+    assert username is not None, "TEST_USERNAME environment variable not set"
     assert password is not None, "TEST_PASSWORD environment variable not set"
+    assert prn is not None, "TEST_PRN environment variable not set"
     assert branch is not None, "TEST_BRANCH environment variable not set"
     assert branch_short_code is not None, (
         "TEST_BRANCH_SHORT_CODE environment variable not set"
@@ -137,7 +175,7 @@ def test_integration_authenticate_with_all_profile_fields(client):
     )
 
     assert profile["name"] == name
-    assert profile["prn"] == username
+    assert profile["prn"] == prn
     assert profile["srn"] == srn
     assert profile["program"] == program
     assert profile["branch_short_code"] == branch_short_code
@@ -179,7 +217,7 @@ def test_integration_missing_username(client):
 
 def test_integration_missing_password(client):
     payload = {
-        "username": os.getenv("TEST_PRN"),
+        "username": os.getenv("TEST_USERNAME"),
         "profile": True,
     }
 
@@ -207,7 +245,7 @@ def test_integration_username_wrong_type(client):
 
 def test_integration_password_wrong_type(client):
     payload = {
-        "username": os.getenv("TEST_PRN"),
+        "username": os.getenv("TEST_USERNAME"),
         "password": 12345,
         "profile": True,
     }
@@ -222,7 +260,7 @@ def test_integration_password_wrong_type(client):
 
 def test_integration_profile_wrong_type(client):
     payload = {
-        "username": os.getenv("TEST_PRN"),
+        "username": os.getenv("TEST_USERNAME"),
         "password": os.getenv("TEST_PASSWORD"),
         "profile": "true",
     }
@@ -237,7 +275,7 @@ def test_integration_profile_wrong_type(client):
 
 def test_integration_fields_wrong_type(client):
     payload = {
-        "username": os.getenv("TEST_PRN"),
+        "username": os.getenv("TEST_USERNAME"),
         "password": os.getenv("TEST_PASSWORD"),
         "profile": True,
         "fields": "prn,branch",
@@ -253,7 +291,7 @@ def test_integration_fields_wrong_type(client):
 
 def test_integration_fields_empty_list(client):
     payload = {
-        "username": os.getenv("TEST_PRN"),
+        "username": os.getenv("TEST_USERNAME"),
         "password": os.getenv("TEST_PASSWORD"),
         "profile": True,
         "fields": [],
@@ -269,7 +307,7 @@ def test_integration_fields_empty_list(client):
 
 def test_integration_fields_invalid_field(client):
     payload = {
-        "username": os.getenv("TEST_PRN"),
+        "username": os.getenv("TEST_USERNAME"),
         "password": os.getenv("TEST_PASSWORD"),
         "profile": True,
         "fields": ["invalid_field"],
