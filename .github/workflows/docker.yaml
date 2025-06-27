@@ -83,7 +83,7 @@ jobs:
 
   deploy-to-render:
 
-    needs: push-to-dockerhub
+    needs: build
     runs-on: ubuntu-latest
 
     env:
