@@ -4,6 +4,10 @@
 [![Pre-Commit Checks](https://github.com/HackerSpace-PESU/pesu-auth/actions/workflows/pre-commit.yaml/badge.svg)](https://github.com/HackerSpace-PESU/pesu-auth/actions/workflows/pre-commit.yaml)
 [![Python Version Compatibility](https://github.com/HackerSpace-PESU/pesu-auth/actions/workflows/flake8.yaml/badge.svg)](https://github.com/HackerSpace-PESU/pesu-auth/actions/workflows/flake8.yml)
 
+![Docker Automated build](https://img.shields.io/docker/automated/aditeyabaral/pesu-auth?logo=docker)
+![Docker Image Version (tag)](https://img.shields.io/docker/v/aditeyabaral/pesu-auth/latest?logo=docker&label=build%20commit)
+![Docker Image Size (tag)](https://img.shields.io/docker/image-size/aditeyabaral/pesu-auth/latest?logo=docker)
+
 A simple API to authenticate PESU credentials using PESU Academy.
 
 The API is secure and protects user privacy by not storing any user credentials. It only validates credentials and
