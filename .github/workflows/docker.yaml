@@ -1,4 +1,4 @@
-name: Docker Image Build and Deploy
+name: Docker Image Build
 
 on: [ push, pull_request ]
 
@@ -37,73 +37,3 @@ jobs:
       - name: Stop the container
         run: |
           docker stop pesu-auth
-
-
-  push-to-dockerhub:
-
-    needs: build
-    runs-on: ubuntu-latest
-
-    env:
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-
-    if: ${{ github.ref == 'refs/heads/main' && success()}}
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Check Docker credentials
-        run: |
-          if [ -z "${{ secrets.DOCKER_USERNAME }}" ] || [ -z "${{ secrets.DOCKER_PASSWORD }}" ]; then
-            echo "Secrets missing, skipping push"
-            exit 1
-          fi
-
-      - name: Get short commit hash
-        id: vars
-        run: echo "tag=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Build and tag image
-        run: |
-          docker build . --tag ${{ secrets.DOCKER_USERNAME }}/pesu-auth:${{ steps.vars.outputs.tag }}
-          docker tag ${{ secrets.DOCKER_USERNAME }}/pesu-auth:${{ steps.vars.outputs.tag }} ${{ secrets.DOCKER_USERNAME }}/pesu-auth:latest
-
-      - name: Push image to Docker Hub
-        run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/pesu-auth:${{ steps.vars.outputs.tag }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/pesu-auth:latest
-
-
-  deploy-to-render:
-
-    needs: build
-    runs-on: ubuntu-latest
-
-    env:
-      RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
-
-    if: ${{ github.ref == 'refs/heads/main' && success()}}
-
-    steps:
-
-      - name: Check Deploy Hook URL
-        run: |
-          if [ -z "${{ secrets.RENDER_DEPLOY_HOOK_URL }}" ]; then
-            echo "Render deploy hook URL is missing, skipping deployment"
-            exit 1
-          fi
-
-      - name: Trigger Render deploy hook
-        run: |
-          echo "🚀 Triggering Render deployment..."
-          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }} || {
-            echo "❌ Render deploy hook failed!"
-            exit 1
-          }
