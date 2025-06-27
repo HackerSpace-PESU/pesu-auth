@@ -4,10 +4,10 @@
 [![Pre-Commit Checks](https://github.com/HackerSpace-PESU/pesu-auth/actions/workflows/pre-commit.yaml/badge.svg)](https://github.com/HackerSpace-PESU/pesu-auth/actions/workflows/pre-commit.yaml)
 [![Python Version Compatibility](https://github.com/HackerSpace-PESU/pesu-auth/actions/workflows/flake8.yml/badge.svg)](https://github.com/HackerSpace-PESU/pesu-auth/actions/workflows/flake8.yml)
 
-A simple API to authenticate PESU credentials using PESU Academy
+A simple API to authenticate PESU credentials using PESU Academy.
 
 The API is secure and protects user privacy by not storing any user credentials. It only validates credentials and
-returns the user's profile information. No personal data is stored or logged.
+returns the user's profile information. No personal data is stored.
 
 ### PESUAuth LIVE Deployment
 
