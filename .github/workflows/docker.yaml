@@ -48,10 +48,17 @@ jobs:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
-    if: ${{ github.ref == 'refs/heads/main' && success() && secrets.DOCKER_USERNAME != '' && secrets.DOCKER_PASSWORD != '' }}
+    if: ${{ github.ref == 'refs/heads/main' && success()}}
 
     steps:
       - uses: actions/checkout@v3
+
+      - name: Check Docker credentials
+        run: |
+          if [ -z "${{ secrets.DOCKER_USERNAME }}" ] || [ -z "${{ secrets.DOCKER_PASSWORD }}" ]; then
+            echo "Secrets missing, skipping push"
+            exit 1
+          fi
 
       - name: Get short commit hash
         id: vars
@@ -82,9 +89,17 @@ jobs:
     env:
       RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
 
-    if: ${{ github.ref == 'refs/heads/main' && success() && secrets.RENDER_DEPLOY_HOOK_URL != '' }}
+    if: ${{ github.ref == 'refs/heads/main' && success()}}
 
     steps:
+
+      - name: Check Deploy Hook URL
+        run: |
+          if [ -z "${{ secrets.RENDER_DEPLOY_HOOK_URL }}" ]; then
+            echo "Render deploy hook URL is missing, skipping deployment"
+            exit 1
+          fi
+
       - name: Trigger Render deploy hook
         run: |
           echo "🚀 Triggering Render deployment..."
