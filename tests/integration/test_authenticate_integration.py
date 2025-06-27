@@ -188,9 +188,10 @@ def test_integration_authenticate_with_all_profile_fields(client):
     assert profile["campus"] == campus
 
 
+@pytest.mark.secret_required
 def test_integration_invalid_password(client):
     payload = {
-        "username": "INVALID_USER",
+        "username": os.getenv("TEST_USERNAME"),
         "password": "wrongpass",
         "profile": True,
     }
@@ -204,7 +205,7 @@ def test_integration_invalid_password(client):
 
 def test_integration_missing_username(client):
     payload = {
-        "password": os.getenv("TEST_PASSWORD"),
+        "password": "password",
         "profile": True,
     }
 
@@ -217,7 +218,7 @@ def test_integration_missing_username(client):
 
 def test_integration_missing_password(client):
     payload = {
-        "username": os.getenv("TEST_USERNAME"),
+        "username": "john.doe@gmail.com",
         "profile": True,
     }
 
@@ -231,7 +232,7 @@ def test_integration_missing_password(client):
 def test_integration_username_wrong_type(client):
     payload = {
         "username": 12345,  # not a string
-        "password": os.getenv("TEST_PASSWORD"),
+        "password": "password",
         "profile": True,
     }
 
@@ -245,7 +246,7 @@ def test_integration_username_wrong_type(client):
 
 def test_integration_password_wrong_type(client):
     payload = {
-        "username": os.getenv("TEST_USERNAME"),
+        "username": "john.doe@gmail.com",
         "password": 12345,
         "profile": True,
     }
@@ -260,8 +261,8 @@ def test_integration_password_wrong_type(client):
 
 def test_integration_profile_wrong_type(client):
     payload = {
-        "username": os.getenv("TEST_USERNAME"),
-        "password": os.getenv("TEST_PASSWORD"),
+        "username": "john.doe@gmail.com",
+        "password": "password",
         "profile": "true",
     }
 
@@ -275,8 +276,8 @@ def test_integration_profile_wrong_type(client):
 
 def test_integration_fields_wrong_type(client):
     payload = {
-        "username": os.getenv("TEST_USERNAME"),
-        "password": os.getenv("TEST_PASSWORD"),
+        "username": "john.doe@gmail.com",
+        "password": "password",
         "profile": True,
         "fields": "prn,branch",
     }
@@ -291,8 +292,8 @@ def test_integration_fields_wrong_type(client):
 
 def test_integration_fields_empty_list(client):
     payload = {
-        "username": os.getenv("TEST_USERNAME"),
-        "password": os.getenv("TEST_PASSWORD"),
+        "username": "john.doe@gmail.com",
+        "password": "password",
         "profile": True,
         "fields": [],
     }
@@ -307,8 +308,8 @@ def test_integration_fields_empty_list(client):
 
 def test_integration_fields_invalid_field(client):
     payload = {
-        "username": os.getenv("TEST_USERNAME"),
-        "password": os.getenv("TEST_PASSWORD"),
+        "username": "john.doe@gmail.com",
+        "password": "password",
         "profile": True,
         "fields": ["invalid_field"],
     }
