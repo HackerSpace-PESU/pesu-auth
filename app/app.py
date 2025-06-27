@@ -47,7 +47,7 @@ def validate_input(
     :param fields: dict: The fields to fetch from the user's profile.
     """
     logging.info(
-        f"Validating input: username={username}, password={'*****' if password else None}, profile={profile}, fields={fields}"
+        f"Validating input: user={username}, password={'*****' if password else None}, profile={profile}, fields={fields}"
     )
     assert username is not None, "Username not provided."
     assert isinstance(username, str), "Username should be a string."
@@ -84,7 +84,7 @@ def readme():
     """
     try:
         if "README.html" not in os.listdir():
-            logging.info("README.html not found, converting README.md to HTML...")
+            logging.info("README.html does not exist. Beginning conversion...")
             convert_readme_to_html()
         logging.info("Rendering README.html...")
         with open("README.html") as f:
@@ -240,7 +240,7 @@ def authenticate():
 
     # Validate the input provided by the user
     try:
-        logging.info("Received authentication request. Validating input...")
+        logging.info("Received authentication request. Beginning input validation...")
         validate_input(username, password, profile, fields)
     except Exception as e:
         logging.exception("Could not validate request data.")
@@ -258,18 +258,21 @@ def authenticate():
 
     # Authenticate the user
     try:
-        logging.info("Authenticating user with PESU Academy...")
+        logging.info(f"Authenticating user={username} with PESU Academy...")
         authentication_result = pesu_academy.authenticate(
             username, password, profile, fields
         )
         authentication_result["timestamp"] = str(current_time)
+        logging.info(
+            f"Returning auth result for user={username}: {authentication_result}"
+        )
         return (
             json.dumps(authentication_result),
             200,
             {"Content-Type": "application/json"},
         )
     except Exception as e:
-        logging.exception("Error authenticating user.")
+        logging.exception(f"Error authenticating user={username}.")
         return (
             json.dumps({"status": False, "message": f"Error authenticating user: {e}"}),
             500,
@@ -337,4 +340,5 @@ if __name__ == "__main__":
         filemode="w",
     )
 
+    # Run the app
     app.run(host=args.host, port=args.port, debug=args.debug)

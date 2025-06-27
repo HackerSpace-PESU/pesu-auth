@@ -3,7 +3,7 @@ name: Python Version Compatibility
 on: [ push, pull_request ]
 
 jobs:
-  build-linux:
+  lint:
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 5
