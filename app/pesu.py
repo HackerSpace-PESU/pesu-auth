@@ -5,8 +5,7 @@ from datetime import datetime
 from typing import Any, Optional
 
 import httpx
-from bs4 import BeautifulSoup
-
+from selectolax.parser import HTMLParser
 from app.constants import PESUAcademyConstants
 
 
@@ -28,7 +27,7 @@ class PESUAcademy:
         return PESUAcademyConstants.BRANCH_SHORT_CODES.get(branch)
 
     def get_profile_information(
-        self, client: httpx.Client, username: Optional[str] = None
+        self, client: httpx.Client, username: str
     ) -> dict[str, Any]:
         """
         Get the profile information of the user.
@@ -61,20 +60,21 @@ class PESUAcademy:
                 )
             logging.debug("Profile data fetched successfully.")
             # Parse the response text
-            soup = BeautifulSoup(response.text, "lxml")
+            soup = HTMLParser(response.text)
 
         except Exception:
             logging.exception("Unable to fetch profile data.")
             return {"error": f"Unable to fetch profile data: {traceback.format_exc()}"}
 
         profile = dict()
-        for element in soup.find_all("div", attrs={"class": "form-group"})[:7]:
-            logging.debug(f"Processing profile element: {element.text.strip()}")
-            if element.text.strip().startswith("PESU Id"):
+        for div in soup.css("div.form-group")[:7]:
+            text = div.text().strip()
+            logging.debug(f"Processing profile element: {text}")
+            if text.startswith("PESU Id"):
                 key = "pesu_id"
-                value = element.text.strip().split()[-1]
+                value = text.split()[-1]
             else:
-                key, value = element.text.strip().split(" ", 1)
+                key, value = text.split(" ", 1)
                 key = "_".join(key.split()).lower()
             value = value.strip()
             logging.debug(f"Extracted key: '{key}' with value: '{value}'")
@@ -95,10 +95,13 @@ class PESUAcademy:
                 logging.debug(f"Adding key: '{key}', value: '{value}' to profile...")
                 profile[key] = value
 
-        profile["email"] = soup.find("input", attrs={"id": "updateMail"}).get("value")
-        profile["phone"] = soup.find("input", attrs={"id": "updateContact"}).get(
-            "value"
-        )
+        # Get the email and phone number from the profile page
+        email_node = soup.css_first("#updateMail")
+        if email_node:
+            profile["email"] = email_node.attributes.get("value").strip()
+        phone_node = soup.css_first("#updateContact")
+        if phone_node:
+            profile["phone"] = phone_node.attributes.get("value").strip()
 
         # if username starts with PES1, then they are from RR campus, else if it is PES2, then EC campus
         if campus_code_match := re.match(r"PES(\d)", profile["prn"]):
@@ -141,10 +144,13 @@ class PESUAcademy:
             logging.debug("Fetching CSRF token from the home page...")
             home_url = "https://www.pesuacademy.com/Academy/"
             response = client.get(home_url)
-            soup = BeautifulSoup(response.text, "lxml")
+            soup = HTMLParser(response.text)
             # extract the csrf token from the meta tag
-            csrf_token = soup.find("meta", attrs={"name": "csrf-token"})["content"]
+            csrf_node = soup.css_first("meta[name='csrf-token']")
+            csrf_token = csrf_node.attributes["content"] if csrf_node else None
             logging.debug(f"CSRF token fetched: {csrf_token}")
+            if not csrf_token:
+                raise ValueError("CSRF token not found in the response.")
         except Exception as e:
             # Log the error and return the error message
             logging.exception("Unable to fetch csrf token.")
@@ -167,7 +173,7 @@ class PESUAcademy:
             # Make a post request to authenticate the user
             auth_url = "https://www.pesuacademy.com/Academy/j_spring_security_check"
             response = client.post(auth_url, data=data)
-            soup = BeautifulSoup(response.text, "lxml")
+            soup = HTMLParser(response.text)
             logging.debug("Authentication response received.")
         except Exception as e:
             # Log the error and return the error message
@@ -180,7 +186,7 @@ class PESUAcademy:
             }
 
         # If class login-form is present, login failed
-        if soup.find("div", attrs={"class": "login-form"}):
+        if soup.css_first("div.login-form"):
             # Log the error and return the error message
             logging.error("Login unsuccessful. Invalid username or password.")
             client.close()
@@ -193,8 +199,12 @@ class PESUAcademy:
         logging.info(f"Login successful for user={username}.")
         status = True
         # Get the newly authenticated csrf token
-        csrf_token = soup.find("meta", attrs={"name": "csrf-token"})["content"]
+        csrf_node = soup.css_first("meta[name='csrf-token']")
+        csrf_token = csrf_node.attributes["content"] if csrf_node else None
         logging.debug(f"Authenticated CSRF token: {csrf_token}")
+        if not csrf_token:
+            logging.exception("CSRF token not found in the authenticated response.")
+
         result = {"status": status, "message": "Login successful."}
 
         if profile:
