@@ -96,11 +96,9 @@ class PESUAcademy:
                 profile[key] = value
 
         # Get the email and phone number from the profile page
-        email_node = soup.css_first("#updateMail")
-        if email_node:
+        if email_node := soup.css_first("#updateMail"):
             profile["email"] = email_node.attributes.get("value").strip()
-        phone_node = soup.css_first("#updateContact")
-        if phone_node:
+        if phone_node := soup.css_first("#updateContact"):
             profile["phone"] = phone_node.attributes.get("value").strip()
 
         # if username starts with PES1, then they are from RR campus, else if it is PES2, then EC campus
@@ -146,10 +144,10 @@ class PESUAcademy:
             response = client.get(home_url)
             soup = HTMLParser(response.text)
             # extract the csrf token from the meta tag
-            csrf_node = soup.css_first("meta[name='csrf-token']")
-            csrf_token = csrf_node.attributes["content"] if csrf_node else None
-            logging.debug(f"CSRF token fetched: {csrf_token}")
-            if not csrf_token:
+            if csrf_node := soup.css_first("meta[name='csrf-token']"):
+                csrf_token = csrf_node.attributes["content"] if csrf_node else None
+                logging.debug(f"CSRF token fetched: {csrf_token}")
+            else:
                 raise ValueError("CSRF token not found in the response.")
         except Exception as e:
             # Log the error and return the error message
@@ -199,10 +197,10 @@ class PESUAcademy:
         logging.info(f"Login successful for user={username}.")
         status = True
         # Get the newly authenticated csrf token
-        csrf_node = soup.css_first("meta[name='csrf-token']")
-        csrf_token = csrf_node.attributes["content"] if csrf_node else None
-        logging.debug(f"Authenticated CSRF token: {csrf_token}")
-        if not csrf_token:
+        if csrf_node := soup.css_first("meta[name='csrf-token']"):
+            csrf_token = csrf_node.attributes["content"] if csrf_node else None
+            logging.debug(f"Authenticated CSRF token: {csrf_token}")
+        else:
             logging.exception("CSRF token not found in the authenticated response.")
 
         result = {"status": status, "message": "Login successful."}
