@@ -31,16 +31,29 @@ Running the PESUAuth API locally is simple. Clone the repository and follow the 
 This is the easiest and recommended way to run the API locally. Ensure you have Docker installed on your system. Run the
 following commands to start the API.
 
-1. Build the Docker image
+1. Build the Docker image either from the source code or pull the pre-built image from Docker Hub.
 
-```bash
-docker build . --tag pesu-auth
-```
+    1. You can build the Docker image from the source code by running the following command in the root directory of
+       the repository.
+
+   ```bash
+   docker build . --tag pesu-auth
+   ```
+
+    2. You can also pull the pre-built Docker image
+       from [Docker Hub](https://hub.docker.com/repository/docker/aditeyabaral/pesu-auth/general) by running the
+       following command:
+
+   ```bash
+   docker pull aditeyabaral/pesu-auth:latest
+   ````
 
 2. Run the Docker container
 
 ```bash
 docker run --name pesu-auth -d -p 5000:5000 pesu-auth
+# If you pulled the pre-built image, use the following command instead:
+docker run --name pesu-auth -d -p 5000:5000 aditeyabaral/pesu-auth:latest
 ```
 
 3. Access the API at `http://localhost:5000/`

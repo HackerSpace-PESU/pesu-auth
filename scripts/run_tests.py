@@ -10,10 +10,12 @@ from dotenv import load_dotenv
 def run_tests():
     load_dotenv()
 
-    test_prn = os.getenv("TEST_PRN")
+    test_username = (
+        os.getenv("TEST_EMAIL") and os.getenv("TEST_PRN") and os.getenv("TEST_PHONE")
+    )
     test_password = os.getenv("TEST_PASSWORD")
 
-    if not test_prn or not test_password:
+    if not test_username or not test_password:
         logging.info("Secrets missing. Running only tests not requiring secrets...")
         command = [
             "pytest",
