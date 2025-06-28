@@ -3,15 +3,15 @@ import pytest
 from app.app import validate_input
 
 
-def test_valid_input_prn_username():
+def test_valid_input_username_prn():
     validate_input("PES1201800001", "mypassword", True, ["name", "prn"])
 
 
-def test_valid_input_email_username():
+def test_valid_input_username_email():
     validate_input("john.doe@gmail.com", "mypassword", True, ["name", "prn"])
 
 
-def test_valid_input_phone_username():
+def test_valid_input_username_phone():
     validate_input("1234567890", "mypassword", True, ["name", "prn"])
 
 

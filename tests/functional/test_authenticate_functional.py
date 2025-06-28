@@ -11,20 +11,20 @@ def pesu_academy():
 
 
 @pytest.mark.secret_required
-def test_authenticate_success_username(pesu_academy: PESUAcademy):
-    username = os.getenv("TEST_USERNAME")
+def test_authenticate_success_username_email(pesu_academy: PESUAcademy):
+    email = os.getenv("TEST_EMAIL")
     password = os.getenv("TEST_PASSWORD")
-    assert username is not None, "TEST_USERNAME environment variable not set"
+    assert email is not None, "TEST_EMAIL environment variable not set"
     assert password is not None, "TEST_PASSWORD environment variable not set"
 
-    result = pesu_academy.authenticate(username, password, profile=False, fields=None)
+    result = pesu_academy.authenticate(email, password, profile=False, fields=None)
     assert result["status"] is True
     assert "Login successful" in result["message"]
     assert "profile" not in result
 
 
 @pytest.mark.secret_required
-def test_authenticate_success_prn_username(pesu_academy: PESUAcademy):
+def test_authenticate_success_username_prn(pesu_academy: PESUAcademy):
     prn = os.getenv("TEST_PRN")
     password = os.getenv("TEST_PASSWORD")
     assert prn is not None, "TEST_PRN environment variable not set"
@@ -37,7 +37,7 @@ def test_authenticate_success_prn_username(pesu_academy: PESUAcademy):
 
 
 @pytest.mark.secret_required
-def test_authenticate_success_phone_username(pesu_academy: PESUAcademy):
+def test_authenticate_success_username_phone(pesu_academy: PESUAcademy):
     phone = os.getenv("TEST_PHONE")
     password = os.getenv("TEST_PASSWORD")
     assert phone is not None, "TEST_PHONE environment variable not set"
@@ -51,13 +51,13 @@ def test_authenticate_success_phone_username(pesu_academy: PESUAcademy):
 
 @pytest.mark.secret_required
 def test_authenticate_with_specific_profile_fields(pesu_academy: PESUAcademy):
-    username = os.getenv("TEST_USERNAME")
+    email = os.getenv("TEST_EMAIL")
     password = os.getenv("TEST_PASSWORD")
     prn = os.getenv("TEST_PRN")
     branch = os.getenv("TEST_BRANCH")
     branch_short_code = os.getenv("TEST_BRANCH_SHORT_CODE")
     campus = os.getenv("TEST_CAMPUS")
-    assert username is not None, "TEST_USERNAME environment variable not set"
+    assert email is not None, "TEST_EMAIL environment variable not set"
     assert password is not None, "TEST_PASSWORD environment variable not set"
     assert prn is not None, "TEST_PRN environment variable not set"
     assert branch is not None, "TEST_BRANCH environment variable not set"
@@ -67,7 +67,7 @@ def test_authenticate_with_specific_profile_fields(pesu_academy: PESUAcademy):
     assert campus is not None, "TEST_CAMPUS environment variable not set"
 
     fields = ["prn", "branch", "branch_short_code", "campus"]
-    result = pesu_academy.authenticate(username, password, profile=True, fields=fields)
+    result = pesu_academy.authenticate(email, password, profile=True, fields=fields)
 
     assert result["status"] is True
     assert "profile" in result
@@ -87,14 +87,13 @@ def test_authenticate_with_specific_profile_fields(pesu_academy: PESUAcademy):
 @pytest.mark.secret_required
 def test_authenticate_with_all_profile_fields(pesu_academy: PESUAcademy):
     name = os.getenv("TEST_NAME")
-    username = os.getenv("TEST_USERNAME")
+    email = os.getenv("TEST_EMAIL")
     password = os.getenv("TEST_PASSWORD")
     prn = os.getenv("TEST_PRN")
     srn = os.getenv("TEST_SRN")
     program = os.getenv("TEST_PROGRAM")
     semester = os.getenv("TEST_SEMESTER")
     section = os.getenv("TEST_SECTION")
-    email = os.getenv("TEST_EMAIL")
     phone = os.getenv("TEST_PHONE")
     campus_code = int(os.getenv("TEST_CAMPUS_CODE"))
     branch = os.getenv("TEST_BRANCH")
@@ -102,7 +101,7 @@ def test_authenticate_with_all_profile_fields(pesu_academy: PESUAcademy):
     campus = os.getenv("TEST_CAMPUS")
 
     assert name is not None, "TEST_NAME environment variable not set"
-    assert username is not None, "TEST_USERNAME environment variable not set"
+    assert email is not None, "TEST_EMAIL environment variable not set"
     assert password is not None, "TEST_PASSWORD environment variable not set"
     assert prn is not None, "TEST_PRN environment variable not set"
     assert branch is not None, "TEST_BRANCH environment variable not set"
@@ -133,7 +132,7 @@ def test_authenticate_with_all_profile_fields(pesu_academy: PESUAcademy):
         "campus",
     ]
 
-    result = pesu_academy.authenticate(username, password, profile=True, fields=None)
+    result = pesu_academy.authenticate(email, password, profile=True, fields=None)
 
     assert result["status"] is True
     assert "profile" in result

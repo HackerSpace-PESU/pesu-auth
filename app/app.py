@@ -6,6 +6,7 @@ import os
 import re
 
 import gh_md_to_html
+from typing import Optional
 import pytz
 from flasgger import Swagger
 from flask import Flask, request
@@ -37,7 +38,7 @@ def validate_input(
     username: str,
     password: str,
     profile: bool,
-    fields: list[str],
+    fields: Optional[list[str]],
 ):
     """
     Validate the input provided by the user.
