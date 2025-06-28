@@ -11,7 +11,7 @@ def run_tests():
     load_dotenv()
 
     test_username = (
-        os.getenv("TEST_USERNAME") and os.getenv("TEST_PRN") and os.getenv("TEST_PHONE")
+        os.getenv("TEST_EMAIL") and os.getenv("TEST_PRN") and os.getenv("TEST_PHONE")
     )
     test_password = os.getenv("TEST_PASSWORD")
 
