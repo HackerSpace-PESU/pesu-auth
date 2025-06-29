@@ -100,7 +100,7 @@ if __name__ == "__main__":
                 success.append(0)
 
     with open(
-        f"benchmark_[num_requests={num_requests}_[max_workers={max_workers}]_[parallel={parallel}].csv",
+        f"benchmark_[num_requests={num_requests}]_[max_workers={max_workers}]_[parallel={parallel}].csv",
         "w",
     ) as f:
         f.write("status,time\n")
