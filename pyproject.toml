@@ -9,19 +9,18 @@ authors = [
     { name = "Aditeya Baral", email = "aditeya.baral@gmail.com" }
 ]
 dependencies = [
-    "beautifulsoup4>=4.13.4",
     "flasgger>=0.9.7.1",
     "flask>=3.1.1",
     "gh-md-to-html>=1.21.3",
+    "httpx>=0.28.1",
     "lxml-html-clean>=0.4.2",
     "pytz>=2025.2",
-    "requests>=2.32.4",
+    "selectolax>=0.3.30",
 ]
 
 [project.optional-dependencies]
 dev = [
     "pre-commit>=4.2.0",
-    "httpx>=0.28.1",
     "pytest>=8.4.1",
     "pytest-cov>=6.2.1",
     "python-dotenv>=1.1.0",
