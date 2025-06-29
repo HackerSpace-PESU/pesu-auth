@@ -97,9 +97,13 @@ class PESUAcademy:
 
         # Get the email and phone number from the profile page
         if email_node := soup.css_first("#updateMail"):
-            profile["email"] = email_node.attributes.get("value").strip()
+            if email_value := email_node.attributes.get("value"):
+                email_value = email_value.strip()
+            profile["email"] = email_value
         if phone_node := soup.css_first("#updateContact"):
-            profile["phone"] = phone_node.attributes.get("value").strip()
+            if phone_value := phone_node.attributes.get("value"):
+                phone_value = phone_value.strip()
+            profile["phone"] = phone_value
 
         # if username starts with PES1, then they are from RR campus, else if it is PES2, then EC campus
         if campus_code_match := re.match(r"PES(\d)", profile["prn"]):
@@ -145,7 +149,7 @@ class PESUAcademy:
             soup = HTMLParser(response.text)
             # extract the csrf token from the meta tag
             if csrf_node := soup.css_first("meta[name='csrf-token']"):
-                csrf_token = csrf_node.attributes["content"] if csrf_node else None
+                csrf_token = csrf_node.attributes.get("content")
                 logging.debug(f"CSRF token fetched: {csrf_token}")
             else:
                 raise ValueError("CSRF token not found in the response.")
@@ -198,7 +202,7 @@ class PESUAcademy:
         status = True
         # Get the newly authenticated csrf token
         if csrf_node := soup.css_first("meta[name='csrf-token']"):
-            csrf_token = csrf_node.attributes["content"] if csrf_node else None
+            csrf_token = csrf_token = csrf_node.attributes.get("content")
             logging.debug(f"Authenticated CSRF token: {csrf_token}")
         else:
             logging.exception("CSRF token not found in the authenticated response.")
