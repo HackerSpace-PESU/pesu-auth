@@ -128,7 +128,7 @@ class PESUAcademy:
         :return: The authentication result
         """
         # Create a new client session
-        client = httpx.Client(follow_redirects=True)
+        client = httpx.Client(follow_redirects=True, timeout=httpx.Timeout(10.0))
         # Default fields to fetch if fields is not provided
         fields = PESUAcademyConstants.DEFAULT_FIELDS if fields is None else fields
         # check if fields is not the default fields and enable field filtering
