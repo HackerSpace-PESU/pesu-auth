@@ -202,7 +202,7 @@ class PESUAcademy:
         status = True
         # Get the newly authenticated csrf token
         if csrf_node := soup.css_first("meta[name='csrf-token']"):
-            csrf_token = csrf_token = csrf_node.attributes.get("content")
+            csrf_token = csrf_node.attributes.get("content")
             logging.debug(f"Authenticated CSRF token: {csrf_token}")
         else:
             logging.exception("CSRF token not found in the authenticated response.")
