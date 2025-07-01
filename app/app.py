@@ -13,6 +13,7 @@ from flask import Flask, request
 
 from app.constants import PESUAcademyConstants
 from app.pesu import PESUAcademy
+from models.validate_input_model import ValidateInputModel
 
 IST = pytz.timezone("Asia/Kolkata")
 app = Flask(__name__)
@@ -41,31 +42,26 @@ def validate_input(
     fields: Optional[list[str]],
 ):
     """
-    Validate the input provided by the user.
+    Validate the input provided by the user using Pydantic model.
     :param username: str: The username of the user.
     :param password: str: The password of the user.
     :param profile: bool: Whether to fetch the profile details of the user.
-    :param fields: dict: The fields to fetch from the user's profile.
+    :param fields: list: The fields to fetch from the user's profile.
+    :return: ValidateInputModel: The validated input model.
     """
     logging.info(
         f"Validating input: user={username}, password={'*****' if password else None}, profile={profile}, fields={fields}"
     )
-    assert username is not None, "Username not provided."
-    assert isinstance(username, str), "Username should be a string."
-    assert password is not None, "Password not provided."
-    assert isinstance(password, str), "Password should be a string."
-    assert isinstance(profile, bool), "Profile should be a boolean."
-    assert fields is None or (isinstance(fields, list) and fields), (
-        "Fields should be a non-empty list or None."
+    
+    validated_data = ValidateInputModel(
+        username=username,
+        password=password,
+        profile=profile,
+        fields=fields
     )
-    if fields is not None:
-        for field in fields:
-            assert (
-                isinstance(field, str) and field in PESUAcademyConstants.DEFAULT_FIELDS
-            ), (
-                f"Invalid field: '{field}'. Valid fields are: {PESUAcademyConstants.DEFAULT_FIELDS}."
-            )
+    
     logging.info("Input validation successful. All parameters are valid.")
+    return validated_data
 
 
 @app.route("/readme")
@@ -111,7 +107,7 @@ def authenticate():
       - in: body
         name: credentials
         required: true
-        description: PESU login credentials and optional flags
+        description: PESU login credentials and optional flags (validated using ValidateInputModel)
         schema:
           type: object
           required:
@@ -120,19 +116,19 @@ def authenticate():
           properties:
             username:
               type: string
-              description: The user's SRN or PRN
+              description: The user's SRN, PRN, email, or phone number (validated and trimmed)
               example: PES1UG20CS123
             password:
               type: string
-              description: The user's password
+              description: The user's password (must not be empty)
               example: yourpassword
             profile:
               type: boolean
-              description: Whether to fetch the user's profile
+              description: Whether to fetch the user's profile (strict boolean validation)
               default: false
             fields:
               type: array
-              description: List of profile fields to return. Must be from the predefined set of allowed fields.
+              description: List of profile fields to return (validated against predefined allowed fields)
               items:
                 type: string
                 enum:
@@ -149,6 +145,8 @@ def authenticate():
                   - campus_code
                   - campus
               example: ["name", "prn", "branch", "branch_short_code", "campus"]
+          additionalProperties: false
+          x-pydantic-model: ValidateInputModel
     responses:
       200:
         description: Authentication successful
@@ -207,7 +205,7 @@ def authenticate():
                   example: RR
 
       400:
-        description: Bad request - Invalid input data
+        description: Bad request - Invalid input data (Pydantic validation errors)
         schema:
           type: object
           properties:
@@ -216,7 +214,7 @@ def authenticate():
               example: false
             message:
               type: string
-              example: Could not validate request data
+              example: "Could not validate request data: 1 validation error for ValidateInputModel"
             timestamp:
               type: string
               format: date-time
@@ -242,7 +240,11 @@ def authenticate():
     # Validate the input provided by the user
     try:
         logging.info("Received authentication request. Beginning input validation...")
-        validate_input(username, password, profile, fields)
+        validated_data = validate_input(username, password, profile, fields)
+        username = validated_data.username
+        password = validated_data.password
+        profile = validated_data.profile
+        fields = validated_data.fields
     except Exception as e:
         logging.exception("Could not validate request data.")
         return (

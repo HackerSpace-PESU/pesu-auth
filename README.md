@@ -248,3 +248,84 @@ curl -X POST http://localhost:5000/authenticate \
   "timestamp": "2024-07-28 22:30:10.103368+05:30"
 }
 ```
+
+## Input Validation with Pydantic
+
+PESUAuth uses [Pydantic](https://pydantic.dev/) for robust input validation and data parsing. This ensures that all API requests are properly validated before processing, providing clear error messages for invalid inputs.
+
+### Validation Model
+
+All requests to the `/authenticate` endpoint are validated using the `ValidateInputModel` Pydantic model with the following features:
+
+- **Strict type checking**: Prevents automatic type coercion (e.g., string "true" won't be converted to boolean)
+- **Custom field validation**: Each field has specific validation rules
+- **Automatic error handling**: Returns descriptive error messages for validation failures
+
+### Validation Rules
+
+| **Field**  | **Type**           | **Validation Rules**                                                               |
+|------------|-------------------|-------------------------------------------------------------------------------------|
+| `username` | `str`             | Cannot be empty or whitespace-only; automatically trimmed                          |
+| `password` | `str`             | Cannot be empty                                                                     |
+| `profile`  | `bool`            | Must be a boolean value (strict - strings like "true" will be rejected)           |
+| `fields`   | `Optional[list[str]]` | Must be a non-empty list or None; all field names must be from predefined allowed list |
+
+### Allowed Profile Fields
+
+When using the `fields` parameter, only the following field names are accepted:
+
+```python
+["name", "prn", "srn", "program", "branch_short_code", "branch", 
+ "semester", "section", "email", "phone", "campus_code", "campus"]
+```
+
+### Validation Error Examples
+
+#### Missing Required Field
+```json
+{
+  "status": false,
+  "message": "Could not validate request data: 1 validation error for ValidateInputModel\nusername\n  Field required [type=missing, input_value={'password': 'test123'}, input_type=dict]",
+  "timestamp": "2024-07-01 10:30:15.123456+05:30"
+}
+```
+
+#### Invalid Field Type
+```json
+{
+  "status": false,
+  "message": "Could not validate request data: 1 validation error for ValidateInputModel\nprofile\n  Input should be a valid boolean [type=bool_type, input_value='true', input_type=str]",
+  "timestamp": "2024-07-01 10:30:15.123456+05:30"
+}
+```
+
+#### Invalid Profile Field
+```json
+{
+  "status": false,
+  "message": "Could not validate request data: 1 validation error for ValidateInputModel\nfields\n  Value error, Invalid field: 'invalid_field'. Valid fields are: ['name', 'prn', 'srn', 'program', 'branch_short_code', 'branch', 'semester', 'section', 'email', 'phone', 'campus_code', 'campus']",
+  "timestamp": "2024-07-01 10:30:15.123456+05:30"
+}
+```
+
+### For Developers
+
+The validation model is defined in `models/validate_input_model.py` and can be imported for testing or integration:
+
+```python
+from models.validate_input_model import ValidateInputModel
+
+# Example usage
+try:
+    validated_data = ValidateInputModel(
+        username="PES1UG20CS123",
+        password="mypassword",
+        profile=True,
+        fields=["name", "prn", "branch"]
+    )
+    print(f"Validated username: {validated_data.username}")
+except ValidationError as e:
+    print(f"Validation failed: {e}")
+```
+
+This approach ensures data integrity and provides clear feedback when requests don't meet the expected format.
