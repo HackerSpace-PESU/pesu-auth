@@ -4,9 +4,8 @@ import traceback
 from datetime import datetime
 from typing import Any, Optional
 
-import requests
-from bs4 import BeautifulSoup
-
+import httpx
+from selectolax.parser import HTMLParser
 from app.constants import PESUAcademyConstants
 
 
@@ -28,11 +27,11 @@ class PESUAcademy:
         return PESUAcademyConstants.BRANCH_SHORT_CODES.get(branch)
 
     def get_profile_information(
-        self, session: requests.Session, username: Optional[str] = None
+        self, client: httpx.Client, username: str
     ) -> dict[str, Any]:
         """
         Get the profile information of the user.
-        :param session: The session object
+        :param client: The httpx client session to use for making requests
         :param username: The username of the user
         :return: The profile information
         """
@@ -53,7 +52,7 @@ class PESUAcademy:
                 "selectedData": "0",
                 "_": str(int(datetime.now().timestamp() * 1000)),
             }
-            response = session.get(profile_url, allow_redirects=False, params=query)
+            response = client.get(profile_url, params=query)
             # If the status code is not 200, raise an exception because the profile page is not accessible
             if response.status_code != 200:
                 raise Exception(
@@ -61,20 +60,21 @@ class PESUAcademy:
                 )
             logging.debug("Profile data fetched successfully.")
             # Parse the response text
-            soup = BeautifulSoup(response.text, "lxml")
+            soup = HTMLParser(response.text)
 
         except Exception:
             logging.exception("Unable to fetch profile data.")
             return {"error": f"Unable to fetch profile data: {traceback.format_exc()}"}
 
         profile = dict()
-        for element in soup.find_all("div", attrs={"class": "form-group"})[:7]:
-            logging.debug(f"Processing profile element: {element.text.strip()}")
-            if element.text.strip().startswith("PESU Id"):
+        for div in soup.css("div.form-group")[:7]:
+            text = div.text().strip()
+            logging.debug(f"Processing profile element: {text}")
+            if text.startswith("PESU Id"):
                 key = "pesu_id"
-                value = element.text.strip().split()[-1]
+                value = text.split()[-1]
             else:
-                key, value = element.text.strip().split(" ", 1)
+                key, value = text.split(" ", 1)
                 key = "_".join(key.split()).lower()
             value = value.strip()
             logging.debug(f"Extracted key: '{key}' with value: '{value}'")
@@ -95,10 +95,15 @@ class PESUAcademy:
                 logging.debug(f"Adding key: '{key}', value: '{value}' to profile...")
                 profile[key] = value
 
-        profile["email"] = soup.find("input", attrs={"id": "updateMail"}).get("value")
-        profile["phone"] = soup.find("input", attrs={"id": "updateContact"}).get(
-            "value"
-        )
+        # Get the email and phone number from the profile page
+        if email_node := soup.css_first("#updateMail"):
+            if email_value := email_node.attributes.get("value"):
+                email_value = email_value.strip()
+            profile["email"] = email_value
+        if phone_node := soup.css_first("#updateContact"):
+            if phone_value := phone_node.attributes.get("value"):
+                phone_value = phone_value.strip()
+            profile["phone"] = phone_value
 
         # if username starts with PES1, then they are from RR campus, else if it is PES2, then EC campus
         if campus_code_match := re.match(r"PES(\d)", profile["prn"]):
@@ -126,8 +131,8 @@ class PESUAcademy:
         :param fields: The fields to fetch from the profile and know your class and section data. Defaults to all fields if not provided.
         :return: The authentication result
         """
-        # Create a new session
-        session = requests.Session()
+        # Create a new client session
+        client = httpx.Client(follow_redirects=True, timeout=httpx.Timeout(10.0))
         # Default fields to fetch if fields is not provided
         fields = PESUAcademyConstants.DEFAULT_FIELDS if fields is None else fields
         # check if fields is not the default fields and enable field filtering
@@ -140,15 +145,18 @@ class PESUAcademy:
             # Get the initial csrf token assigned to the user session when the home page is loaded
             logging.debug("Fetching CSRF token from the home page...")
             home_url = "https://www.pesuacademy.com/Academy/"
-            response = session.get(home_url)
-            soup = BeautifulSoup(response.text, "lxml")
+            response = client.get(home_url)
+            soup = HTMLParser(response.text)
             # extract the csrf token from the meta tag
-            csrf_token = soup.find("meta", attrs={"name": "csrf-token"})["content"]
-            logging.debug(f"CSRF token fetched: {csrf_token}")
+            if csrf_node := soup.css_first("meta[name='csrf-token']"):
+                csrf_token = csrf_node.attributes.get("content")
+                logging.debug(f"CSRF token fetched: {csrf_token}")
+            else:
+                raise ValueError("CSRF token not found in the response.")
         except Exception as e:
             # Log the error and return the error message
             logging.exception("Unable to fetch csrf token.")
-            session.close()
+            client.close()
             return {
                 "status": False,
                 "message": "Unable to fetch csrf token.",
@@ -166,13 +174,13 @@ class PESUAcademy:
             logging.debug("Attempting to authenticate user...")
             # Make a post request to authenticate the user
             auth_url = "https://www.pesuacademy.com/Academy/j_spring_security_check"
-            response = session.post(auth_url, data=data)
-            soup = BeautifulSoup(response.text, "lxml")
+            response = client.post(auth_url, data=data)
+            soup = HTMLParser(response.text)
             logging.debug("Authentication response received.")
         except Exception as e:
             # Log the error and return the error message
             logging.exception("Unable to authenticate.")
-            session.close()
+            client.close()
             return {
                 "status": False,
                 "message": "Unable to authenticate.",
@@ -180,10 +188,10 @@ class PESUAcademy:
             }
 
         # If class login-form is present, login failed
-        if soup.find("div", attrs={"class": "login-form"}):
+        if soup.css_first("div.login-form"):
             # Log the error and return the error message
             logging.error("Login unsuccessful. Invalid username or password.")
-            session.close()
+            client.close()
             return {
                 "status": False,
                 "message": "Invalid username or password, or the user does not exist.",
@@ -193,8 +201,12 @@ class PESUAcademy:
         logging.info(f"Login successful for user={username}.")
         status = True
         # Get the newly authenticated csrf token
-        csrf_token = soup.find("meta", attrs={"name": "csrf-token"})["content"]
-        logging.debug(f"Authenticated CSRF token: {csrf_token}")
+        if csrf_node := soup.css_first("meta[name='csrf-token']"):
+            csrf_token = csrf_node.attributes.get("content")
+            logging.debug(f"Authenticated CSRF token: {csrf_token}")
+        else:
+            logging.exception("CSRF token not found in the authenticated response.")
+
         result = {"status": status, "message": "Login successful."}
 
         if profile:
@@ -202,7 +214,7 @@ class PESUAcademy:
                 f"Profile data requested for user={username}. Fetching profile data..."
             )
             # Fetch the profile information
-            result["profile"] = self.get_profile_information(session, username)
+            result["profile"] = self.get_profile_information(client, username)
             # Filter the fields if field filtering is enabled
             if field_filtering:
                 result["profile"] = {
@@ -217,6 +229,6 @@ class PESUAcademy:
         logging.info(
             f"Authentication process for user={username} completed successfully."
         )
-        # Close the session and return the result
-        session.close()
+        # Close the client session and return the result
+        client.close()
         return result

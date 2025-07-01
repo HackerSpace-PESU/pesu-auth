@@ -15,4 +15,4 @@ bruno.json
 .env
 .uv/
 .ruff_cache/
-uv.lock
+*.csv
