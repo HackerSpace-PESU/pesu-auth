@@ -65,6 +65,8 @@ packaging==25.0
     # via flasgger
 pillow==11.2.1
     # via gh-md-to-html
+pydantic==2.6.0
+    # via pesu-auth (pyproject.toml)
 pytz==2025.2
     # via pesu-auth (pyproject.toml)
 pyyaml==6.0.2
