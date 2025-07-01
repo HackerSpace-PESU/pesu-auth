@@ -275,8 +275,20 @@ All requests to the `/authenticate` endpoint are validated using the `ValidateIn
 When using the `fields` parameter, only the following field names are accepted:
 
 ```python
-["name", "prn", "srn", "program", "branch_short_code", "branch", 
- "semester", "section", "email", "phone", "campus_code", "campus"]
+[
+    "name",
+    "prn",
+    "srn",
+    "program",
+    "branch_short_code",
+    "branch",
+    "semester",
+    "section",
+    "email",
+    "phone",
+    "campus_code",
+    "campus",
+]
 ```
 
 ### Validation Error Examples
@@ -321,7 +333,7 @@ try:
         username="PES1UG20CS123",
         password="mypassword",
         profile=True,
-        fields=["name", "prn", "branch"]
+        fields=["name", "prn", "branch"],
     )
     print(f"Validated username: {validated_data.username}")
 except ValidationError as e:

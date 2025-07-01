@@ -11,7 +11,6 @@ import pytz
 from flasgger import Swagger
 from flask import Flask, request
 
-from app.constants import PESUAcademyConstants
 from app.pesu import PESUAcademy
 from models.validate_input_model import ValidateInputModel
 
@@ -52,14 +51,11 @@ def validate_input(
     logging.info(
         f"Validating input: user={username}, password={'*****' if password else None}, profile={profile}, fields={fields}"
     )
-    
+
     validated_data = ValidateInputModel(
-        username=username,
-        password=password,
-        profile=profile,
-        fields=fields
+        username=username, password=password, profile=profile, fields=fields
     )
-    
+
     logging.info("Input validation successful. All parameters are valid.")
     return validated_data
 
