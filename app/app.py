@@ -12,7 +12,7 @@ from flasgger import Swagger
 from flask import Flask, request
 
 from app.pesu import PESUAcademy
-from models.validate_input_model import ValidateInputModel
+from app.models.validate_input_model import ValidateInputModel
 
 IST = pytz.timezone("Asia/Kolkata")
 app = Flask(__name__)
