@@ -1,4 +1,5 @@
 import pytest
+from pydantic import ValidationError
 
 from app.app import validate_input
 
@@ -20,33 +21,36 @@ def test_valid_input_with_fields_none():
 
 
 def test_missing_username():
-    with pytest.raises(AssertionError, match="Username not provided."):
+    with pytest.raises(ValidationError) as exc_info:
         validate_input(None, "pass", True, ["name"])
+    assert "Input should be a valid string" in str(exc_info.value)
 
 
 def test_non_string_username():
-    with pytest.raises(AssertionError, match="Username should be a string."):
+    with pytest.raises(ValidationError) as exc_info:
         validate_input(1234, "pass", False, None)
+    assert "Input should be a valid string" in str(exc_info.value)
 
 
 def test_missing_password():
-    with pytest.raises(AssertionError, match="Password not provided."):
+    with pytest.raises(ValidationError) as exc_info:
         validate_input("user", None, False, None)
+    assert "Input should be a valid string" in str(exc_info.value)
 
 
 def test_profile_not_boolean():
-    with pytest.raises(AssertionError, match="Profile should be a boolean."):
-        validate_input("user", "pass", "yes", None)
+    with pytest.raises(ValidationError) as exc_info:
+        validate_input("user", "pass", "invalid_bool", None)
+    assert "Input should be a valid boolean" in str(exc_info.value)
 
 
 def test_fields_invalid_type():
-    with pytest.raises(
-        AssertionError, match="Fields should be a non-empty list or None."
-    ):
+    with pytest.raises(ValidationError) as exc_info:
         validate_input("user", "pass", False, {})
+    assert "Input should be a valid list" in str(exc_info.value)
 
 
 def test_fields_with_invalid_field_name():
-    with pytest.raises(AssertionError) as e:
+    with pytest.raises(ValidationError) as exc_info:
         validate_input("user", "pass", True, ["not_a_field"])
-    assert "Invalid field" in str(e.value)
+    assert "Invalid field" in str(exc_info.value)
