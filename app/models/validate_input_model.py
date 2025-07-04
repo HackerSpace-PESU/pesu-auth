@@ -1,5 +1,6 @@
 from pydantic import BaseModel, field_validator, ConfigDict
 from typing import Optional
+from app.constants import PESUAcademyConstants
 
 
 class ValidateInputModel(BaseModel):
@@ -30,25 +31,10 @@ class ValidateInputModel(BaseModel):
         if v is not None:
             if not isinstance(v, list) or not v:
                 raise ValueError("Fields must be a non-empty list or None")
-
-            valid_fields = [
-                "name",
-                "prn",
-                "srn",
-                "program",
-                "branch_short_code",
-                "branch",
-                "semester",
-                "section",
-                "email",
-                "phone",
-                "campus_code",
-                "campus",
-            ]
-
-            for field in v:
-                if not isinstance(field, str) or field not in valid_fields:
-                    raise ValueError(
-                        f"Invalid field: '{field}'. Valid fields are: {valid_fields}"
-                    )
+            valid_fields = PESUAcademyConstants.DEFAULT_FIELDS
+            invalid_fields = [field for field in v if field not in valid_fields]
+            if invalid_fields:
+                raise ValueError(
+                    f"Invalid fields: {', '.join(invalid_fields)}. Valid fields are: {', '.join(valid_fields)}"
+                )
         return v

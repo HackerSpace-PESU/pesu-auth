@@ -103,7 +103,7 @@ def authenticate():
       - in: body
         name: credentials
         required: true
-        description: PESU login credentials and optional flags (validated using ValidateInputModel)
+        description: PESU login credentials and optional flags
         schema:
           type: object
           required:
@@ -112,19 +112,19 @@ def authenticate():
           properties:
             username:
               type: string
-              description: The user's SRN, PRN, email, or phone number (validated and trimmed)
+              description: The user's SRN, PRN, email, or phone number
               example: PES1UG20CS123
             password:
               type: string
-              description: The user's password (must not be empty)
+              description: The user's password
               example: yourpassword
             profile:
               type: boolean
-              description: Whether to fetch the user's profile (strict boolean validation)
+              description: Whether to fetch the user's profile
               default: false
             fields:
               type: array
-              description: List of profile fields to return (validated against predefined allowed fields)
+              description: List of profile fields to return. Must be from the predefined set of allowed fields.
               items:
                 type: string
                 enum:
@@ -141,7 +141,6 @@ def authenticate():
                   - campus_code
                   - campus
               example: ["name", "prn", "branch", "branch_short_code", "campus"]
-          additionalProperties: false
           x-pydantic-model: ValidateInputModel
     responses:
       200:
@@ -201,7 +200,7 @@ def authenticate():
                   example: RR
 
       400:
-        description: Bad request - Invalid input data (Pydantic validation errors)
+        description: Bad request - Invalid input data
         schema:
           type: object
           properties:
@@ -210,7 +209,7 @@ def authenticate():
               example: false
             message:
               type: string
-              example: "Could not validate request data: 1 validation error for ValidateInputModel"
+              example: Could not validate request data
             timestamp:
               type: string
               format: date-time
